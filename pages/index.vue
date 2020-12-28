@@ -19,10 +19,83 @@
                     </v-row>
                 </v-card-title>
                 <v-data-table
+					class="mb-15"
+					v-model="selectAttendance"
                     :headers="headers"
-                    :items="attendance"
+                    fixed-header
+                    :items="attendance_formatted"
                     :search="search"
+                    item-key="index"
+					group-by="date"
+                    show-select
+					show-group-by
                 >
+					<!-- item-key="index" -->
+					<!-- show-select -->
+
+                    <!-- <template v-slot:item="props">
+                        <tr :active="props.selected">
+                            <td>
+                                <v-checkbox
+                                    v-model="selectAttendance"
+                                ></v-checkbox>
+                            </td> -->
+                                    <!-- :label="`Checkbox 1: ${checkbox1.toString()}`" -->
+                            <!-- <td>{{ props.item.employee }}</td>
+                            <td>
+                                <template v-for="timing in props.item.timings.day_min">
+                                    <v-card>
+                                        {{timing}}
+                                    </v-card>
+                                </template>
+                            </td>
+                            <td>
+                                <template v-for="timing in props.item.timings.noon_min">
+                                    <v-card>
+                                        {{timing}}
+                                    </v-card>
+                                </template>
+                            </td>
+                            <td>{{ props.item.otstart }}</td>
+                            <td>{{ props.item.otend }}</td>
+                            <td>{{ props.item.othours }}</td>
+                            <td>{{ props.item.location }}</td>
+                            <td>
+                                <v-chip
+                                    :color="statusColorCoding(props.item.status)"
+                                    dark
+                                >
+                                    {{ props.item.status }}
+                                </v-chip>
+                            </td>
+                        </tr> 
+                    </template> -->
+
+					<template v-slot:item.dayin="{ item }">
+						<template v-for="timing in item.timings.day_min">
+                            <v-card>
+                                {{timing}}
+                            </v-card>
+                        </template>
+					</template>
+
+					<template v-slot:item.nightin="{ item }">
+						<template v-for="timing in item.timings.noon_min">
+                            <v-card>
+                                {{timing}}
+                            </v-card>
+                        </template>
+					</template>
+
+					<template v-slot:item.status="{ item }">
+						<v-chip
+							:color="statusColorCoding(item.status)"
+							dark
+						>
+							{{ item.status }}
+						</v-chip>
+					</template>
+
                     <template slot="body.append">
                         <tr>
                             <th class="d-flex justify-space-between align-center">TOTAL <span class="d-sm-none">{{total}}</span></th>
@@ -31,21 +104,95 @@
                             <th colspan="2" class="pa-0"></th>
                         </tr>
                     </template>
-                    <template v-slot:item="props">
-                        <tr :active="props.selected" @click="toCheck(props.item)">
-                            <td>{{ props.item.employee }}</td>
-                            <td>{{ props.item.dayin }}</td>
-                            <td>{{ props.item.dayout }}</td>
-                            <td>{{ props.item.nightin }}</td>
-                            <td>{{ props.item.nightout }}</td>
-                            <td>{{ props.item.otstart }}</td>
-                            <td>{{ props.item.otend }}</td>
-                            <td>{{ props.item.ottotal }}</td>
-                            <td>{{ props.item.location }}</td>
-                            <td>{{ props.item.status }}</td>
-                        </tr> 
-                    </template>
                 </v-data-table>
+                
+				<v-sheet
+                    dark
+                    class="form-toolbar">
+                    <v-toolbar
+                        flat
+                        height="60">
+                        
+                        <v-btn
+							outlined
+                        >
+							Reject
+                            <v-icon right>mdi-close-circle-outline</v-icon>
+                        </v-btn>
+						
+                        <v-btn
+                            outlined
+                        >
+							Submit
+                            <v-icon right>mdi-send-circle-outline</v-icon>
+                        </v-btn>
+
+                        <!-- Preview -->
+                        <!-- <v-dialog v-model="preview" fullscreen hide-overlay transition="dialog-bottom-transition">
+                            <v-card dark>
+                                <v-toolbar dark color="primary">
+                                    <v-btn icon dark @click="preview = false">
+                                        <v-icon>mdi-close</v-icon>
+                                    </v-btn>
+                                    <v-toolbar-title>Invoice</v-toolbar-title>
+                                </v-toolbar>
+                                <div v-if="preview">
+                                    <InvoiceView :invoice="invoice" :key="viewerwKey" :toPrint=false />
+                                </div>
+
+                            </v-card>
+                        </v-dialog> -->
+                        
+                        <!-- Print -->
+                        <!-- <v-dialog v-model="print" fullscreen hide-overlay transition="dialog-bottom-transition">
+                            <v-card dark>
+                                <v-toolbar dark color="primary">
+                                    <v-btn icon dark @click="onSubmit">
+                                        <v-icon>mdi-close</v-icon>
+                                    </v-btn>
+                                    <v-toolbar-title>Invoice</v-toolbar-title>
+                                </v-toolbar>
+                                <div v-if="print">
+                                    <InvoiceView :invoice="invoice" :key="viewerwKey" />
+                                </div>
+                            </v-card>
+                        </v-dialog>
+
+                        <v-dialog
+                            v-model="confirmPrint"
+                            max-width="290"
+                        >
+                            <v-card>
+                                <v-card-title class="headline">Confirm Submit</v-card-title>
+
+                                <v-card-text>
+                                    Are you sure you want to submit? Check all the details of the invoice before submission.
+                                </v-card-text>
+
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+
+                                    <v-btn
+                                        color="red darken-1"
+                                        text
+                                        @click="confirmPrint = false"
+                                    >
+                                        Cancel
+                                    </v-btn>
+
+                                    <v-btn
+                                        color="primary"
+                                        text
+                                        @click="confirmPrint = false; print = true"
+                                    >
+                                        Confirm
+                                    </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog> -->
+
+                    </v-toolbar>
+                </v-sheet>
             </v-card>
         </v-col>
     </v-row>
@@ -54,6 +201,8 @@
 <script>
     import DateRange from '~/components/DateRange';
     import { mapState } from 'vuex';
+    import moment from 'moment';
+    import _ from 'lodash';
 
 	export default {
 		data () {
@@ -61,23 +210,79 @@
 				datefilter: [],
 				suggests: [],
 				search: '',
+				selectAttendance: [],
 				headers: [
 					{
 						text: 'Employee',
-						align: 'start',
-						sortable: false,
 						value: 'employee',
+						align: 'start',
+						sortable: false
 					},
-					{ text: 'Day In', value: 'dayin' },
-					{ text: 'Day Out', value: 'dayout' },
-					{ text: 'Night In', value: 'nightin' },
-					{ text: 'Night Out', value: 'nightout' },
-					{ text: 'OT Start', value: 'otstart' },
-					{ text: 'OT End', value: 'otend' },
-					{ text: 'OT Total', value: 'ottotal' },
+					{
+                        text: 'Morning',
+                        value: 'dayin',
+                        // width: '30%'
+                    },
+					// { text: 'Day Out', value: 'dayout' },
+					{
+                        text: 'Afternoon',
+                        value: 'nightin',
+                        // width: '30%'
+                    },
+					// { text: 'Night Out', value: 'nightout' },
+					{ text: 'OT Timings', value: 'ottimings' },
+					// { text: 'OT End', value: 'otend' },
+					{ text: 'OT Hours', value: 'othours' },
 					{ text: 'Locations', value: 'locations' },
 					{ text: 'Status', value: 'status' }
-				]
+				],
+				attendance: [
+					{
+						index: 1,
+						uniqueid: '1001',
+						employee: 'Joseph Legere',
+						dayin: '05:30 AM',
+						dayout: '12:00 AM',
+						nightin: '04:00 PM',
+						nightout: '05:30 PM',
+						otstart: '',
+						otend: '',
+						ottotal: '',
+						locations: '',
+						status: 'REGULAR',
+						date: '20-10-27'
+					},
+					{
+						index: 2,
+						uniqueid: '1002',
+						employee: 'Lecenio Trillo',
+						dayin: '05:30 AM',
+						dayout: '12:00 AM',
+						nightin: '04:00 PM',
+						nightout: '06:00 PM',
+						otstart: '05:30 PM',
+						otend: '06:00 PM',
+						ottotal: '0.5',
+						locations: 'FFC',
+						status: 'OVERTIME',
+						date: '20-10-27'
+					},
+					{
+						index: 3,
+						uniqueid: '1001',
+						employee: 'Joseph Legere',
+						dayin: '05:30 AM',
+						dayout: '12:00 AM',
+						nightin: '04:00 PM',
+						nightout: '05:30 PM',
+						otstart: '',
+						otend: '',
+						ottotal: '',
+						locations: '',
+						status: 'REGULAR',
+						date: '20-10-28'
+					}
+                ]
 			}
 		},
 		methods: {
@@ -89,13 +294,206 @@
 			},
 			filterData() {
 				// this.$store.dispatch('invoices/get', { dates: this.datefilter, tenant: this.tenant });
+			},
+			statusColorCoding (status) {
+				if (status == 'REGULAR') return 'green'
+				else if (status == 'OVERTIME') return 'blue'
+				else return 'red'
 			}
 		},
 		computed: {
+            ...mapState({
+                attendance_raw: state => state.attendance.list
+            }),
 			total: function() {
 				return 0
 				// return this.invoices.reduce(function(a, c) { return a + Number((c.total) || 0) }, 0);
-			},
+            },
+            attendance_formatted() {
+                let local_index = 1;
+
+                return this.attendance_raw.map((elem) => {
+                    let _obj = {};
+                    // index: 2,
+					// 	uniqueid: '1002',
+					// 	employee: 'Lecenio Trillo',
+					// 	dayin: '05:30 AM',
+					// 	dayout: '12:00 AM',
+					// 	nightin: '04:00 PM',
+					// 	nightout: '06:00 PM',
+					// 	otstart: '05:30 PM',
+					// 	otend: '06:00 PM',
+					// 	ottotal: '0.5',
+					// 	locations: 'FFC',
+					// 	status: 'OVERTIME',
+                    // 	date: '20-10-27'
+                    
+                    // segregate day and night timings, create sets / sessions of working hours
+                    // if set is not divisible by 2 then it means worktime is performed around 12 PM
+                    // then we split the worktime that is around 12, split it into 2, morning and afternoon set
+                    // e.g. 11:30:00 - 12:00:00, 12:00:00 - 13:00:00
+                    // finally list down all work sites
+
+                    // console.log(elem.timings)
+
+                    // elem.timings.forEach((timing, count) => {
+                    //     let _set = {};// temporary store for partial sets
+                    //     let _time = timing.input.substr(11);
+                    //     console.log(_time)
+
+                    //     if (moment(_time, 'h:mma').isBefore(moment('12:00pm', 'h:mma'))) {
+                    //         _set[(timing.type === 0 ? 'in' : 'out')] = _time;
+                    //         // }
+                    //         // else {
+                    //         //     if (moment(_time, 'h:mma').isAfter(moment('12:00pm', 'h:mma'))) {// current is greater / after the previous timing
+                    //         //         _set[(timing.type === 0 ? 'in' : 'out')] = _time;
+                    //         //     }
+                    //         //     // pair = 1;
+                    //         // }
+                    //     }
+                    //     else {
+                            
+                    //     }
+                    // });
+                    let timings = _.cloneDeep(elem.timings);
+                    let _len = 3;
+                    let timing_sets = {
+                        day: [],
+                        noon: [],
+                        day_min: [],// min => minimum
+                        noon_min: []
+                    };
+                    let locations = '';
+                    let _set = {};// temporary store for partial sets
+                    let _set_location = { in: '', out: '' };
+                    let count = 0;
+                    
+                    do {
+                    // for (let i = 0; i < _len; i++) {
+                        let timing = timings[count];
+                        let _time = timing.input.substr(11);
+                        let _loc_regex = new RegExp(timing.place, 'i');
+                        // console.log(_time)
+                        // console.log(timing)
+
+                        if (moment(_time, 'h:mma').isBefore(moment('12:00pm', 'h:mma')) || (moment(_time, 'h:mma').isSame(moment('12:00pm', 'h:mma')) && timing.type === 1)) {// day schedule
+                            
+                            if (Object.keys(_set).length === 0) {// to be certain that the IN property is included first
+                                _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
+
+                                if (locations.search(_loc_regex) === -1)
+                                    _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
+
+                                // reset variables
+                                timings.splice(0, 1);
+                                count = 0;
+                            }
+                            else if (Object.keys(_set)[0] !== (timing.type === 0 ? 'in' : 'out')) {
+                                _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
+
+                                if (locations.search(_loc_regex) === -1 && Object.values(_set_location)[0].search(_loc_regex) === -1)
+                                    _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
+
+                                // input the work locations
+                                _set.location = `${_set_location.in}${(_set_location.in !== '' && _set_location.out !== '' ? ', ' : '')}${_set_location.out}`;
+
+                                timing_sets.day.push(_set);
+                                timing_sets.day_min.push(`${moment(_set.in).format('HH:mm:ss')} - ${moment(_set.out).format('HH:mm:ss')}`);
+                                
+                                locations += (_set.location.replace(/\s/g, '') !== '' ? (locations !== '' ? ', ' : '') + _set.location : '');
+
+                                // reset variables
+                                _set = {};
+                                _set_location = { in: '', out: '' };
+                                timings.splice(0, 1);
+                                count = 0;
+                            }
+                            else {
+                                count++;
+                            }
+                            
+                            // console.log('day');
+                        }
+                        else {// noon schedule
+                            if (Object.keys(_set).length === 0 && timing.type === 0) {// to be certain that the IN property is included first
+                                _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
+
+                                if (locations.search(_loc_regex) === -1)
+                                    _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
+                                
+                                // reset variables
+                                timings.splice(0, 1);
+                                count = 0;
+                            }
+                            else if (Object.keys(_set)[0] !== (timing.type === 0 ? 'in' : 'out')) {
+                                _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
+
+                                if (locations.search(_loc_regex) === -1 && Object.values(_set_location)[0].search(_loc_regex) === -1)
+                                    _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
+
+                                // input the work locations
+                                _set.location = `${_set_location.in}${(_set_location.in !== '' && _set_location.out !== '' ? ', ' : '')}${_set_location.out}`;
+
+                                timing_sets.noon.push(_set);
+                                timing_sets.noon_min.push(`${moment(_set.in).format('HH:mm:ss')} - ${moment(_set.out).format('HH:mm:ss')}`);
+                                
+                                locations += (_set.location.replace(/\s/g, '') !== '' ? (locations !== '' ? ', ' : '') + _set.location : '');
+                                
+                                // reset variables
+                                _set = {};
+                                _set_location = { in: '', out: '' };
+                                timings.splice(0, 1);
+                                count = 0;
+                            }
+                            else {
+                                count++;
+                            }
+
+                            // console.log('noon');
+                        }
+                        // console.log(timing_sets);
+                        // console.log(timings.length);
+
+                    } while(timings.length > 0);
+                    // console.log(timing_sets)
+                    // console.log(locations);
+
+                    // calculate overtime
+                    console.log(timing_sets)
+                    let workHours = 8;
+                    let hrTotal = 0;
+                    // loop through each sets then accumulate the work hours to a "variable" to determine attendance status
+                    timing_sets.day.forEach(timing => {
+                        console.log(moment(timing.out).diff(moment(timing.in), 'hours', true))
+                        hrTotal += moment(timing.out).diff(moment(timing.in), 'hours', true);
+                    });
+
+                    timing_sets.noon.forEach(timing => {
+                        console.log(moment(timing.out).diff(moment(timing.in), 'hours', true))
+                        hrTotal += moment(timing.out).diff(moment(timing.in), 'hours', true);
+                    });
+
+                    // then specify attendance status
+
+                    _obj['index'] = local_index;
+                    _obj['uniqueid'] = elem.employee.id;
+                    _obj['employee'] = elem.employee.name;
+
+                    _obj['timings'] = timing_sets;
+
+                    _obj['othours'] = hrTotal;
+
+                    _obj['locations'] = locations;
+                    _obj['status'] = (hrTotal >= workHours ? ( hrTotal > workHours ? 'OVERTIME' : 'REGULAR') : 'UNDERTIME');
+
+                    _obj['date'] = (elem.timings[0].input).substr(0, 10);
+
+                    local_index++;
+                    console.log(_obj)
+
+                    return _obj;
+                })
+            },
 			// tenant() {
 			// 	return this.loggeduser.tenantid;
 			// },
@@ -103,9 +501,21 @@
 			// 	invoices: state => state.invoices.list,
 			// 	loggeduser: state => state.auth.loggeduser
 			// })
-		},
+        },
+        async asyncData({store}) {
+            await store.dispatch('attendance/get', {date: 'date', tenant: 'tenant'});
+        },
 		components: {
 			DateRange
 		}
 	}
 </script>
+
+<style scoped>
+    .form-toolbar {
+        position:               fixed;
+        z-index:                4;
+        bottom:                 35px;
+        right:                  0;
+    }
+</style>

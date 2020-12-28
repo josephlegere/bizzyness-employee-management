@@ -11,6 +11,8 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.12.2",
     "core-js": "^3.6.5",
+    "dotenv": "^8.2.0",
+    "lodash": "^4.17.20",
     "moment": "^2.29.1",
     "nuxt": "^2.14.6"
   },

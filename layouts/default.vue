@@ -54,9 +54,9 @@
 		</v-app-bar>
 
 		<v-content>
-			<v-container>
+			<!-- <v-container> -->
 			<nuxt />
-			</v-container>
+			<!-- </v-container> -->
 		</v-content>
 		<v-navigation-drawer
 			v-model="rightDrawer"
@@ -100,25 +100,20 @@ export default {
 			drawer: true,
 			items: [
 				{
-					icon: 'mdi-apps',
-					title: 'Welcome',
+					icon: 'mdi-text-box-plus-outline',
+					title: 'Check Attendance',
 					to: '/'
 				},
 				{
 					icon: 'mdi-form-select',
-					title: 'Invoices',
-					to: '/invoices'
-				},
-				{
-					icon: 'mdi-text-box-plus-outline',
-					title: 'Create Invoice',
-					to: '/invoices/create'
+					title: 'Monitor Performance',
+					to: '/monitor'
 				}
 			],
 			miniVariant: false,
 			right: true,
 			rightDrawer: false,
-			title: 'Accounting'
+			title: 'Employee Management'
 		}
 	},
 	methods: {
