@@ -376,78 +376,58 @@
                         // console.log(_time)
                         // console.log(timing)
 
+                        if (Object.keys(_set).length === 0) {
+                            _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
+
+                            if (locations.search(_loc_regex) === -1)
+                                _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
+
+                            // reset variables
+                            timings.splice(0, 1);
+                            count = 0;
+                        }
+                        else if (Object.keys(_set)[0] !== (timing.type === 0 ? 'in' : 'out')) {// assuming the length of "set" is 1
+                            _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
+
+                            if (locations.search(_loc_regex) === -1 && Object.values(_set_location)[0].search(_loc_regex) === -1)
+                                _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
+
+                            // input the work locations
+                            _set.location = `${_set_location.in}${(_set_location.in !== '' && _set_location.out !== '' ? ', ' : '')}${_set_location.out}`;
+
+                            // reset variables
+                            timings.splice(0, 1);
+                            count = 0;
+                        }
+                        else {
+                            count++;
+                        }
+
+                        if (Object.keys(_set).length < 2) continue;
+
                         if (moment(_time, 'h:mma').isBefore(moment('12:00pm', 'h:mma')) || (moment(_time, 'h:mma').isSame(moment('12:00pm', 'h:mma')) && timing.type === 1)) {// day schedule
+
+                            timing_sets.day.push(_set);
+                            timing_sets.day_min.push(`${moment(_set.in).format('HH:mm:ss')} - ${moment(_set.out).format('HH:mm:ss')}`);
                             
-                            if (Object.keys(_set).length === 0) {// to be certain that the IN property is included first
-                                _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
+                            locations += (_set.location.replace(/\s/g, '') !== '' ? (locations !== '' ? ', ' : '') + _set.location : '');
 
-                                if (locations.search(_loc_regex) === -1)
-                                    _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
-
-                                // reset variables
-                                timings.splice(0, 1);
-                                count = 0;
-                            }
-                            else if (Object.keys(_set)[0] !== (timing.type === 0 ? 'in' : 'out')) {
-                                _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
-
-                                if (locations.search(_loc_regex) === -1 && Object.values(_set_location)[0].search(_loc_regex) === -1)
-                                    _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
-
-                                // input the work locations
-                                _set.location = `${_set_location.in}${(_set_location.in !== '' && _set_location.out !== '' ? ', ' : '')}${_set_location.out}`;
-
-                                timing_sets.day.push(_set);
-                                timing_sets.day_min.push(`${moment(_set.in).format('HH:mm:ss')} - ${moment(_set.out).format('HH:mm:ss')}`);
-                                
-                                locations += (_set.location.replace(/\s/g, '') !== '' ? (locations !== '' ? ', ' : '') + _set.location : '');
-
-                                // reset variables
-                                _set = {};
-                                _set_location = { in: '', out: '' };
-                                timings.splice(0, 1);
-                                count = 0;
-                            }
-                            else {
-                                count++;
-                            }
+                            // reset variables
+                            _set = {};
+                            _set_location = { in: '', out: '' };
                             
                             // console.log('day');
                         }
                         else {// noon schedule
-                            if (Object.keys(_set).length === 0 && timing.type === 0) {// to be certain that the IN property is included first
-                                _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
 
-                                if (locations.search(_loc_regex) === -1)
-                                    _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
-                                
-                                // reset variables
-                                timings.splice(0, 1);
-                                count = 0;
-                            }
-                            else if (Object.keys(_set)[0] !== (timing.type === 0 ? 'in' : 'out')) {
-                                _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
-
-                                if (locations.search(_loc_regex) === -1 && Object.values(_set_location)[0].search(_loc_regex) === -1)
-                                    _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
-
-                                // input the work locations
-                                _set.location = `${_set_location.in}${(_set_location.in !== '' && _set_location.out !== '' ? ', ' : '')}${_set_location.out}`;
-
-                                timing_sets.noon.push(_set);
-                                timing_sets.noon_min.push(`${moment(_set.in).format('HH:mm:ss')} - ${moment(_set.out).format('HH:mm:ss')}`);
-                                
-                                locations += (_set.location.replace(/\s/g, '') !== '' ? (locations !== '' ? ', ' : '') + _set.location : '');
-                                
-                                // reset variables
-                                _set = {};
-                                _set_location = { in: '', out: '' };
-                                timings.splice(0, 1);
-                                count = 0;
-                            }
-                            else {
-                                count++;
-                            }
+                            timing_sets.noon.push(_set);
+                            timing_sets.noon_min.push(`${moment(_set.in).format('HH:mm:ss')} - ${moment(_set.out).format('HH:mm:ss')}`);
+                            
+                            locations += (_set.location.replace(/\s/g, '') !== '' ? (locations !== '' ? ', ' : '') + _set.location : '');
+                            
+                            // reset variables
+                            _set = {};
+                            _set_location = { in: '', out: '' };
 
                             // console.log('noon');
                         }
