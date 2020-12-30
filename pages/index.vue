@@ -74,15 +74,19 @@
 					<template v-slot:item.dayin="{ item }">
 						<template v-for="timing in item.timings.day_min">
                             <v-card>
-                                {{timing}}
+                                <v-card-text class=text-center>
+                                    {{timing}}
+                                </v-card-text>
                             </v-card>
                         </template>
 					</template>
 
 					<template v-slot:item.nightin="{ item }">
 						<template v-for="timing in item.timings.noon_min">
-                            <v-card>
-                                {{timing}}
+                            <v-card class="my-2">
+                                <v-card-text class=text-center>
+                                    {{timing}}
+                                </v-card-text>
                             </v-card>
                         </template>
 					</template>
@@ -233,56 +237,14 @@
 					{ text: 'OT Timings', value: 'ottimings' },
 					// { text: 'OT End', value: 'otend' },
 					{ text: 'OT Hours', value: 'othours' },
-					{ text: 'Locations', value: 'locations' },
+					{
+                        text: 'Locations',
+                        value: 'locations',
+                        width: '10%'
+                    },
 					{ text: 'Status', value: 'status' }
 				],
-				attendance: [
-					{
-						index: 1,
-						uniqueid: '1001',
-						employee: 'Joseph Legere',
-						dayin: '05:30 AM',
-						dayout: '12:00 AM',
-						nightin: '04:00 PM',
-						nightout: '05:30 PM',
-						otstart: '',
-						otend: '',
-						ottotal: '',
-						locations: '',
-						status: 'REGULAR',
-						date: '20-10-27'
-					},
-					{
-						index: 2,
-						uniqueid: '1002',
-						employee: 'Lecenio Trillo',
-						dayin: '05:30 AM',
-						dayout: '12:00 AM',
-						nightin: '04:00 PM',
-						nightout: '06:00 PM',
-						otstart: '05:30 PM',
-						otend: '06:00 PM',
-						ottotal: '0.5',
-						locations: 'FFC',
-						status: 'OVERTIME',
-						date: '20-10-27'
-					},
-					{
-						index: 3,
-						uniqueid: '1001',
-						employee: 'Joseph Legere',
-						dayin: '05:30 AM',
-						dayout: '12:00 AM',
-						nightin: '04:00 PM',
-						nightout: '05:30 PM',
-						otstart: '',
-						otend: '',
-						ottotal: '',
-						locations: '',
-						status: 'REGULAR',
-						date: '20-10-28'
-					}
-                ]
+				attendance: []
 			}
 		},
 		methods: {
@@ -403,35 +365,60 @@
                             count++;
                         }
 
+                        // before continuing the set should have the requirments
+                        // "in" & "out" variables or else it moves on to the next loop
                         if (Object.keys(_set).length < 2) continue;
+                        console.log(_set)
+                        let _set_collection = [];
 
-                        if (moment(_time, 'h:mma').isBefore(moment('12:00pm', 'h:mma')) || (moment(_time, 'h:mma').isSame(moment('12:00pm', 'h:mma')) && timing.type === 1)) {// day schedule
-
-                            timing_sets.day.push(_set);
-                            timing_sets.day_min.push(`${moment(_set.in).format('HH:mm:ss')} - ${moment(_set.out).format('HH:mm:ss')}`);
-                            
-                            locations += (_set.location.replace(/\s/g, '') !== '' ? (locations !== '' ? ', ' : '') + _set.location : '');
-
-                            // reset variables
-                            _set = {};
-                            _set_location = { in: '', out: '' };
-                            
-                            // console.log('day');
+                        // checks if "in" is morning and "out" is afternoon
+                        if (moment(_set.in.substr(11), 'h:mma').isBefore(moment('12:00pm', 'h:mma')) && moment(_set.out.substr(11), 'h:mma').isAfter(moment('12:00pm', 'h:mma'))) {
+                            _set_collection.push({
+                                in: _set.in,
+                                out: `${_set.in.substr(0, 10)} 12:00:00.00`,
+                                location: _set.location
+                            });
+                            _set_collection.push({
+                                in: `${_set.out.substr(0, 10)} 12:00:00.00`,
+                                out: _set.out,
+                                location: ''
+                            });
                         }
-                        else {// noon schedule
-
-                            timing_sets.noon.push(_set);
-                            timing_sets.noon_min.push(`${moment(_set.in).format('HH:mm:ss')} - ${moment(_set.out).format('HH:mm:ss')}`);
-                            
-                            locations += (_set.location.replace(/\s/g, '') !== '' ? (locations !== '' ? ', ' : '') + _set.location : '');
-                            
-                            // reset variables
-                            _set = {};
-                            _set_location = { in: '', out: '' };
-
-                            // console.log('noon');
+                        else {
+                            _set_collection.push({
+                                in: _set.in,
+                                out: _set.out,
+                                location: _set.location
+                            });
                         }
-                        // console.log(timing_sets);
+
+                        _set_collection.forEach(_set_item => {
+                            // if (moment(_time, 'h:mma').isBefore(moment('12:00pm', 'h:mma')) || (moment(_time, 'h:mma').isSame(moment('12:00pm', 'h:mma')) && timing.type === 1)) {
+                            if (moment(_set_item.in.substr(11), 'h:mma').isBefore(moment('12:00pm', 'h:mma'))) {// day schedule
+
+                                timing_sets.day.push(_set_item);
+                                timing_sets.day_min.push(`${moment(_set_item.in).format('HH:mm:ss')} - ${moment(_set_item.out).format('HH:mm:ss')}`);
+                                
+                                locations += (_set_item.location.replace(/\s/g, '') !== '' ? (locations !== '' ? ', ' : '') + _set_item.location : '');
+                                
+                                // console.log('day');
+                            }
+                            else {// noon schedule
+
+                                timing_sets.noon.push(_set_item);
+                                timing_sets.noon_min.push(`${moment(_set_item.in).format('HH:mm:ss')} - ${moment(_set_item.out).format('HH:mm:ss')}`);
+                                
+                                locations += (_set_item.location.replace(/\s/g, '') !== '' ? (locations !== '' ? ', ' : '') + _set_item.location : '');
+
+                                // console.log('noon');
+                            }
+                            // console.log(timing_sets);
+                        });
+
+                        // reset variables
+                        _set = {};
+                        _set_location = { in: '', out: '' };
+                        
                         // console.log(timings.length);
 
                     } while(timings.length > 0);
@@ -439,17 +426,17 @@
                     // console.log(locations);
 
                     // calculate overtime
-                    console.log(timing_sets)
+                    // console.log(timing_sets)
                     let workHours = 8;
                     let hrTotal = 0;
                     // loop through each sets then accumulate the work hours to a "variable" to determine attendance status
                     timing_sets.day.forEach(timing => {
-                        console.log(moment(timing.out).diff(moment(timing.in), 'hours', true))
+                        // console.log(moment(timing.out).diff(moment(timing.in), 'hours', true))
                         hrTotal += moment(timing.out).diff(moment(timing.in), 'hours', true);
                     });
 
                     timing_sets.noon.forEach(timing => {
-                        console.log(moment(timing.out).diff(moment(timing.in), 'hours', true))
+                        // console.log(moment(timing.out).diff(moment(timing.in), 'hours', true))
                         hrTotal += moment(timing.out).diff(moment(timing.in), 'hours', true);
                     });
 
@@ -469,7 +456,7 @@
                     _obj['date'] = (elem.timings[0].input).substr(0, 10);
 
                     local_index++;
-                    console.log(_obj)
+                    // console.log(_obj)
 
                     return _obj;
                 })
