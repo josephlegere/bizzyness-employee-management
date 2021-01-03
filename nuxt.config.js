@@ -39,7 +39,9 @@ export default {
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    // baseURL: process.env.BASE_URL
+  },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
@@ -62,5 +64,11 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+  },
+  
+  // dotenv
+  env: {
+    BASE_URL: process.env.BASE_URL,
+    ATTENDANCE_URL: process.env.ATTENDANCE_URL
   }
 }
