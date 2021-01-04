@@ -1,20 +1,38 @@
 import moment from 'moment';
 
 export const state = () => ({
-	list: []
+    checker_list: [],
+	monitor_list: []
 });
 
 export const actions = {
-    async get({ commit }, { date, tenant }) {
+    async getChecker({ commit }, { date, tenant }) {
         let _list = [];
 
-        const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}`);
+        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}`,
+        {
+            st: "for confirmation",
+            dt: "current"
+        });
         _list = response.data.data;
 
-		commit("setList", _list);
+		commit("setChecker", _list);
+    },
+    async getMonitor({ commit }, { date, tenant }) {
+        let _list = [];
+
+        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}`,
+        {
+            st: "confirmed",
+            dt: "current"
+        });
+        _list = response.data.data;
+
+		commit("setMonitor", _list);
     }
 }
 
 export const mutations = {
-    setList: (state, attendance) => (state.list = attendance)
+    setChecker: (state, attendance) => (state.checker_list = attendance),
+    setMonitor: (state, attendance) => (state.monitor_list = attendance)
 };

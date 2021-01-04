@@ -226,6 +226,7 @@
     import _ from 'lodash';
 
 	export default {
+		name: 'Monitor-Performance',
 		data () {
 			return {
 				datefilter: [],
@@ -244,21 +245,14 @@
                         value: 'dayin',
                         // width: '30%'
                     },
-					// { text: 'Day Out', value: 'dayout' },
 					{
                         text: 'Afternoon',
                         value: 'nightin',
                         // width: '30%'
                     },
-					// { text: 'Night Out', value: 'nightout' },
 					{ text: 'OT Timings', value: 'ottimings' },
-					// { text: 'OT End', value: 'otend' },
 					{ text: 'OT Hours', value: 'othours' },
-					{
-                        text: 'Locations',
-                        value: 'locations',
-                        width: '10%'
-                    },
+					{ text: 'Locations', value: 'locations', width: '10%' },
 					{ text: 'Status', value: 'status' }
 				]
 			}
@@ -267,8 +261,6 @@
 			updateDateFilter(range) {
 				this.datefilter = range;
 				this.filterData();
-			},
-			toCheck(status) {
 			},
 			filterData() {
 				// this.$store.dispatch('invoices/get', { dates: this.datefilter, tenant: this.tenant });
@@ -281,7 +273,7 @@
 		},
 		computed: {
             ...mapState({
-                attendance: state => state.attendance.list
+                attendance: state => state.attendance.monitor_list
             }),
 			total: function() {
 				return 0
@@ -512,7 +504,7 @@
 			// })
         },
         async asyncData({store}) {
-            await store.dispatch('attendance/get', {date: 'date', tenant: 'tenant'});
+            await store.dispatch('attendance/getMonitor', {date: 'date', tenant: 'tenant'});
         },
 		components: {
 			DateRange
