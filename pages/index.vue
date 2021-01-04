@@ -91,11 +91,18 @@
 					</template>
 
                     <template v-slot:item.ottimings="{ item }">
-                        <v-card v-if="item.ottimings !== ''" class="my-2">
+                        <!-- <v-card v-if="item.ottimings !== ''" class="my-2">
                             <v-card-text class=text-center>
                                 {{item.ottimings}}
                             </v-card-text>
-                        </v-card>
+                        </v-card> -->
+                        <template v-for="timing in item.ottimings">
+                            <v-card class="my-2">
+                                <v-card-text class=text-center>
+                                    {{timing}}
+                                </v-card-text>
+                            </v-card>
+                        </template>
 					</template>
 
 					<template v-slot:item.status="{ item }">
@@ -441,7 +448,9 @@
                     let hrTotal = 0;
                     let overtime_init = false;// if overtime was already triggered / it was already indicated that there was overtime
                     let overtime_timings = { in: '', out: '' };
+                    overtime_timings.list = [];
                     
+                    // DON'T INCLUDE ANY CONDITION IF TIMING LIST HAS LENGTH GREATER THAN 0
                     // loop through each sets then accumulate the work hours to a "variable" to determine attendance status
                     // check if overtime starts here in "morning"
                     timing_sets.day.forEach(timing => {
@@ -449,15 +458,28 @@
                         let hrs_to_complete_work = workHours - hrTotal;
                         hrTotal += moment(timing.out).diff(moment(timing.in), 'hours', true);
 
-                        if (hrTotal > workHours && !overtime_init) {// try to figure out which part the OT started
-                            overtime_timings.in = moment(timing.in).add(hrs_to_complete_work, 'hours').format('hh:mm A');
+                        if (hrTotal > workHours) {// try to figure out which part the OT started
+                            let _in = moment(timing.in).format('hh:mm A');
+                            let _out = moment(timing.out).format('hh:mm A');
 
-                            if (timing_sets.noon.length > 0) {
-                                overtime_timings.out = moment(timing_sets.noon[timing_sets.noon.length - 1].out).format('h:mma');
+                            if (!overtime_init) {// goes here only once, when overtime_init is still false
+                                overtime_init = true;
+                                _in = moment(timing.in).add(hrs_to_complete_work, 'hours').format('hh:mm A');
+                                overtime_timings.in = _in;
+
+                                // determines if noon has timings,
+                                // if not it already assumes that last timing in "day" is overtime out
+                                if (timing_sets.noon.length > 0) {
+                                    overtime_timings.out = moment(timing_sets.noon[timing_sets.noon.length - 1].out).format('h:mma');
+                                }
+                                else {
+                                    overtime_timings.out = moment(timing_sets.day[timing_sets.day.length - 1].out).format('h:mma');
+                                }
                             }
-                            else {
-                                overtime_timings.out = moment(timing_sets.day[timing_sets.day.length - 1].out).format('h:mma');
-                            }
+
+                            // Collection of all Overtime Entry
+                            overtime_timings.list.push(`${_in} - ${_out}`);
+
                         }
                     });
 
@@ -467,13 +489,25 @@
                         let hrs_to_complete_work = workHours - hrTotal;
                         hrTotal += moment(timing.out).diff(moment(timing.in), 'hours', true);
 
-                        if (hrTotal > workHours && !overtime_init) {// try to figure out which part the OT started
-                            overtime_timings.in = moment(timing.in).add(hrs_to_complete_work, 'hours').format('hh:mm A');
-                            overtime_timings.out = moment(timing_sets.noon[timing_sets.noon.length - 1].out).format('hh:mm A');
+                        if (hrTotal > workHours) {// try to figure out which part the OT started
+                            let _in = moment(timing.in).format('hh:mm A');
+                            let _out = moment(timing.out).format('hh:mm A');
+                        
+                            if (!overtime_init) {// goes here only once, when overtime_init is still false
+                                overtime_init = true;
+                                _in = moment(timing.in).add(hrs_to_complete_work, 'hours').format('hh:mm A');
+                                overtime_timings.in = _in;
+
+                                overtime_timings.out = moment(timing_sets.noon[timing_sets.noon.length - 1].out).format('hh:mm A');
+                            }
+
+                            // Collection of all Overtime Entry
+                            overtime_timings.list.push(`${_in} - ${_out}`);
+                            
                         }
                     });
 
-                    // console.log(overtime_timings)
+                    // console.log(overtime_timings);
 
                     _obj['index'] = local_index;
                     _obj['uniqueid'] = elem.employee.id;
@@ -481,7 +515,8 @@
 
                     _obj['timings'] = timing_sets;
 
-                    _obj['ottimings'] = `${overtime_timings.in}${(overtime_timings.in !== '' && overtime_timings.out !== '' ? ' - ' : '')}${overtime_timings.out}`;
+                    // _obj['ottimings'] = `${overtime_timings.in}${(overtime_timings.in !== '' && overtime_timings.out !== '' ? ' - ' : '')}${overtime_timings.out}`;
+                    _obj['ottimings'] = overtime_timings.list;
                     _obj['othours'] = (hrTotal <= workHours ? '' : hrTotal - workHours);
 
                     _obj['locations'] = locations;
