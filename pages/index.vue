@@ -119,8 +119,12 @@
                             <v-icon @click="toggle">
                                 {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
                             </v-icon>
-                            {{ items[0].date }}
-                            {{ `Count: ` + items.length }}
+                            <v-chip color="secondary">
+                                {{ items[0].date | moment("dddd, MMMM Do YYYY") }}
+                            </v-chip>
+                            <v-chip color="secondary">
+                                {{ `Timed In (${items.length})` }}
+                            </v-chip>
                         </th>
 					</template>
 

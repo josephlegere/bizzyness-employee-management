@@ -14,7 +14,8 @@
     "dotenv": "^8.2.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
-    "nuxt": "^2.14.6"
+    "nuxt": "^2.14.6",
+    "vue-moment": "^4.1.0"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.11.2"

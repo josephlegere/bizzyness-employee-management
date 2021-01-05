@@ -119,9 +119,35 @@
                             <v-icon @click="toggle">
                                 {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
                             </v-icon>
-                            {{ items[0].date }}
-                            {{ `Count: ` + items.length }}
+                            <v-chip color="secondary">
+                                {{ items[0].date | moment("dddd, MMMM Do YYYY") }}
+                            </v-chip>
+                            <v-chip color="secondary">
+                                {{ `Timed In (${items.length})` }}
+                            </v-chip>
                         </th>
+                        <!-- <th>
+                            <v-menu offset-y>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                        color="secondary"
+                                        dark
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    >
+                                        Awaiting Entries
+                                    </v-btn>
+                                </template>
+                                <v-list>
+                                    <v-list-item
+                                        v-for="(item, index) in 5"
+                                        :key="index"
+                                    >
+                                        <v-list-item-title>Item {{ item }}</v-list-item-title>
+                                    </v-list-item>
+                                </v-list>
+                            </v-menu>
+                        </th> -->
 					</template>
 
                     <template slot="body.append">
