@@ -147,6 +147,7 @@
                         
                         <v-btn
 							outlined
+                            @click="rejectAttendance"
                         >
 							Reject
                             <v-icon right>mdi-close-circle-outline</v-icon>
@@ -284,6 +285,9 @@
 			},
             async confirmAttendance () {
                 await this.$store.dispatch('attendance/confirm', this.selectAttendance);
+            },
+            async rejectAttendance () {
+                await this.$store.dispatch('attendance/reject', this.selectAttendance);
             }
 		},
 		computed: {

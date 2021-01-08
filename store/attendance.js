@@ -34,8 +34,9 @@ export const actions = {
         const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_CONFIRM}`, { list });
         console.log(response)
     },
-    async reject() {
-
+    async reject({}, list) {
+        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_REJECT}`, { list });
+        console.log(response)
     }
 }
 
