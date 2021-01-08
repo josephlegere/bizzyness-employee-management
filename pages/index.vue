@@ -154,6 +154,7 @@
 						
                         <v-btn
                             outlined
+                            @click="confirmAttendance"
                         >
 							Submit
                             <v-icon right>mdi-send-circle-outline</v-icon>
@@ -280,7 +281,10 @@
 				if (status == 'REGULAR') return 'green'
 				else if (status == 'OVERTIME') return 'blue'
 				else return 'red'
-			}
+			},
+            async confirmAttendance () {
+                await this.$store.dispatch('attendance/confirm', this.selectAttendance);
+            }
 		},
 		computed: {
             ...mapState({

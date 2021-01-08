@@ -70,6 +70,7 @@ export default {
   // dotenv
   env: {
     BASE_URL: process.env.BASE_URL,
-    ATTENDANCE_URL: process.env.ATTENDANCE_URL
+    ATTENDANCE_URL: process.env.ATTENDANCE_URL,
+    ATTENDANCE_URL_CONFIRM: process.env.ATTENDANCE_URL_CONFIRM
   }
 }

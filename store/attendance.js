@@ -29,6 +29,13 @@ export const actions = {
         _list = response.data.data;
 
 		commit("setMonitor", _list);
+    },
+    async confirm({}, list) {
+        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_CONFIRM}`, { list });
+        console.log(response)
+    },
+    async reject() {
+
     }
 }
 
