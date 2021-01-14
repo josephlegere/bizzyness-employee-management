@@ -120,7 +120,7 @@
                                 {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
                             </v-icon>
                             <v-chip color="secondary">
-                                {{ items[0].date | moment("dddd, MMMM Do YYYY") }}
+                                {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
                             </v-chip>
                             <v-chip color="secondary">
                                 {{ `Timed In (${items.length})` }}
@@ -128,14 +128,14 @@
                         </th>
 					</template>
 
-                    <template slot="body.append">
+                    <!-- <template slot="body.append">
                         <tr>
                             <th class="d-flex justify-space-between align-center">TOTAL <span class="d-sm-none">{{total}}</span></th>
                             <th colspan="2" class="pa-0"></th>
                             <th class="d-none d-sm-block align-center">{{total.toFixed(2)}}</th> 
                             <th colspan="2" class="pa-0"></th>
                         </tr>
-                    </template>
+                    </template> -->
                 </v-data-table>
                 
 				<v-sheet
@@ -147,48 +147,42 @@
                         
                         <v-btn
 							outlined
-                            @click="rejectAttendance"
+                            @click="confirmReject = true"
                         >
 							Reject
                             <v-icon right>mdi-close-circle-outline</v-icon>
                         </v-btn>
+
+                        <v-spacer></v-spacer>
+
+                        <v-btn
+                            outlined
+                            @click="print = true"
+                        >
+                            <v-icon>mdi-printer-search</v-icon>
+                        </v-btn>
 						
                         <v-btn
                             outlined
-                            @click="confirmAttendance"
+                            @click="confirmPrint = true"
                         >
-							Submit
+							Confirm
                             <v-icon right>mdi-send-circle-outline</v-icon>
                         </v-btn>
-
-                        <!-- Preview -->
-                        <!-- <v-dialog v-model="preview" fullscreen hide-overlay transition="dialog-bottom-transition">
-                            <v-card dark>
-                                <v-toolbar dark color="primary">
-                                    <v-btn icon dark @click="preview = false">
-                                        <v-icon>mdi-close</v-icon>
-                                    </v-btn>
-                                    <v-toolbar-title>Invoice</v-toolbar-title>
-                                </v-toolbar>
-                                <div v-if="preview">
-                                    <InvoiceView :invoice="invoice" :key="viewerwKey" :toPrint=false />
-                                </div>
-
-                            </v-card>
-                        </v-dialog> -->
                         
-                        <!-- Print -->
-                        <!-- <v-dialog v-model="print" fullscreen hide-overlay transition="dialog-bottom-transition">
+                        <!-- Print and Preview -->
+                        <v-dialog v-model="print" fullscreen hide-overlay transition="dialog-bottom-transition">
                             <v-card dark>
                                 <v-toolbar dark color="primary">
-                                    <v-btn icon dark @click="onSubmit">
+                                    <v-btn icon dark @click="print = false; toPrint = false">
                                         <v-icon>mdi-close</v-icon>
                                     </v-btn>
-                                    <v-toolbar-title>Invoice</v-toolbar-title>
+                                    <v-toolbar-title>Attendance</v-toolbar-title>
                                 </v-toolbar>
                                 <div v-if="print">
-                                    <InvoiceView :invoice="invoice" :key="viewerwKey" />
+                                    <AttendanceView :attendance="attendance_packaged" :key="viewerwKey" :toPrint="toPrint" :supervisor="supervisor" />
                                 </div>
+
                             </v-card>
                         </v-dialog>
 
@@ -197,10 +191,10 @@
                             max-width="290"
                         >
                             <v-card>
-                                <v-card-title class="headline">Confirm Submit</v-card-title>
+                                <v-card-title class="headline">Confirm Attendance</v-card-title>
 
                                 <v-card-text>
-                                    Are you sure you want to submit? Check all the details of the invoice before submission.
+                                    Are you sure you want to confirm? Check all the details of the attendance before submission.
                                 </v-card-text>
 
                                 <v-card-actions>
@@ -217,13 +211,46 @@
                                     <v-btn
                                         color="primary"
                                         text
-                                        @click="confirmPrint = false; print = true"
+                                        @click="confirmAttendance"
                                     >
                                         Confirm
                                     </v-btn>
                                 </v-card-actions>
                             </v-card>
-                        </v-dialog> -->
+                        </v-dialog>
+
+                        <v-dialog
+                            v-model="confirmReject"
+                            max-width="290"
+                        >
+                            <v-card>
+                                <v-card-title class="headline">Reject Attendance</v-card-title>
+
+                                <v-card-text>
+                                    Are you sure you want to reject? Check all the details of the attendance before rejecting.
+                                </v-card-text>
+
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+
+                                    <v-btn
+                                        color="red darken-1"
+                                        text
+                                        @click="confirmReject = false"
+                                    >
+                                        Cancel
+                                    </v-btn>
+
+                                    <v-btn
+                                        color="primary"
+                                        text
+                                        @click="rejectAttendance"
+                                    >
+                                        Reject
+                                    </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
 
                     </v-toolbar>
                 </v-sheet>
@@ -234,6 +261,7 @@
 
 <script>
     import DateRange from '~/components/DateRange';
+    import AttendanceView from '~/components/AttendanceView';
     import { mapState } from 'vuex';
     import moment from 'moment';
     import _ from 'lodash';
@@ -267,7 +295,14 @@
 					{ text: 'OT Hours', value: 'othours' },
 					{ text: 'Locations', value: 'locations', width: '10%' },
 					{ text: 'Status', value: 'status' }
-				]
+                ],
+                confirmReject: false,
+                confirmPrint: false,
+                print: false,
+                toPrint: false,
+                supervisor: {
+                    name: 'Joby Legere'
+                }
 			}
 		},
 		methods: {
@@ -279,14 +314,36 @@
 				// this.$store.dispatch('invoices/get', { dates: this.datefilter, tenant: this.tenant });
 			},
 			statusColorCoding (status) {
-				if (status == 'REGULAR') return 'green'
-				else if (status == 'OVERTIME') return 'blue'
+				if (status == 'REG') return 'green'
+				else if (status == 'OT') return 'blue'
 				else return 'red'
-			},
+            },
+            extractLayout (list) {
+                let _layout = [];
+
+                list.forEach(elem => {
+                    let { employee, othours, locations, status, timings, otitmings } = elem;
+                    
+                    _layout.push({
+                        employee,
+                        othours,
+                        locations,
+                        status
+                    });
+                });
+
+                return _layout;
+            },
             async confirmAttendance () {
+                this.confirmPrint = false;
+                this.toPrint = true;
+                this.print = true;
+                console.log('confirm');
                 await this.$store.dispatch('attendance/confirm', this.selectAttendance);
             },
             async rejectAttendance () {
+                this.confirmReject = false; 
+                console.log('reject');
                 await this.$store.dispatch('attendance/reject', this.selectAttendance);
             }
 		},
@@ -536,7 +593,7 @@
                     _obj['othours'] = (hrTotal <= workHours ? '' : hrTotal - workHours);
 
                     _obj['locations'] = locations;
-                    _obj['status'] = (hrTotal >= workHours ? ( hrTotal > workHours ? 'OVERTIME' : 'REGULAR') : 'UNDERTIME');// specify attendance status: 'OVERTIME', 'REGULAR', 'UNDERTIME'
+                    _obj['status'] = (hrTotal >= workHours ? ( hrTotal > workHours ? 'OT' : 'REG') : 'INC');// specify attendance status: 'OVERTIME', 'REGULAR', 'UNDERTIME'
 
                     _obj['date'] = (elem.timings[0].input).substr(0, 10);
 
@@ -546,6 +603,16 @@
                     return _obj;
                 })
             },
+            attendance_packaged() {
+                let _attendance = _.cloneDeep(this.selectAttendance);
+
+                return {
+                    layout: _attendance
+                }
+            },
+            viewerwKey () { //initially to enable rerender of component, now mainly triggers a function (but still need to return a date)
+                return Date.now(); //opened
+            }
 			// tenant() {
 			// 	return this.loggeduser.tenantid;
 			// },
@@ -558,13 +625,15 @@
             await store.dispatch('attendance/getChecker', {date: 'date', tenant: 'tenant'});
         },
 		components: {
-			DateRange
+            DateRange,
+            AttendanceView
 		}
 	}
 </script>
 
 <style scoped>
     .form-toolbar {
+        width:                  100%;
         position:               fixed;
         z-index:                4;
         bottom:                 35px;
