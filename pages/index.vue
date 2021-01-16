@@ -4,7 +4,7 @@
             <v-card>
                 <v-card-title>
                     <v-row no-gutters>
-                        <v-col cols="12"  md="6" class="pa-2">
+                        <v-col cols="12" md="6" class="pa-2">
                             <v-text-field
                                 v-model="search"
                                 append-icon="mdi-magnify"
@@ -138,124 +138,134 @@
                     </template> -->
                 </v-data-table>
                 
-				<v-sheet
-                    dark
-                    class="form-toolbar">
-                    <v-toolbar
-                        flat
-                        height="60">
-                        
-                        <v-btn
-							outlined
-                            @click="confirmReject = true"
-                        >
-							Reject
-                            <v-icon right>mdi-close-circle-outline</v-icon>
-                        </v-btn>
+                <v-row
+                    class="toolbar-container"
+                    no-gutters
+                >
+                    <v-col
+                        md="5"
+                        class="ml-md-auto"
+                    >
+                        <v-sheet
+                            dark
+                            class="form-toolbar">
+                            <v-toolbar
+                                flat
+                                height="60">
+                                
+                                <v-btn
+                                    outlined
+                                    @click="confirmReject = true"
+                                >
+                                    Reject
+                                    <v-icon right>mdi-close-circle-outline</v-icon>
+                                </v-btn>
 
-                        <v-spacer></v-spacer>
+                                <v-spacer></v-spacer>
 
-                        <v-btn
-                            outlined
-                            @click="print = true"
-                        >
-                            <v-icon>mdi-printer-search</v-icon>
-                        </v-btn>
-						
-                        <v-btn
-                            outlined
-                            @click="confirmPrint = true"
-                        >
-							Confirm
-                            <v-icon right>mdi-send-circle-outline</v-icon>
-                        </v-btn>
-                        
-                        <!-- Reject -->
-                        <v-dialog v-model="print" fullscreen hide-overlay transition="dialog-bottom-transition">
-                            <v-card dark>
-                                <v-toolbar dark color="primary">
-                                    <v-btn icon dark @click="print = false; toPrint = false">
-                                        <v-icon>mdi-close</v-icon>
-                                    </v-btn>
-                                    <v-toolbar-title>Attendance</v-toolbar-title>
-                                </v-toolbar>
-                                <div v-if="print">
-                                    <AttendanceView :attendance="attendance_packaged" :key="viewerwKey" :toPrint="toPrint" :supervisor="supervisor" />
-                                </div>
+                                <v-btn
+                                    outlined
+                                    @click="print = true"
+                                >
+                                    <v-icon>mdi-printer-search</v-icon>
+                                </v-btn>
+                                
+                                <v-btn
+                                    outlined
+                                    @click="confirmPrint = true"
+                                >
+                                    Confirm
+                                    <v-icon right>mdi-send-circle-outline</v-icon>
+                                </v-btn>
+                                
+                                <!-- Reject -->
+                                <v-dialog v-model="print" fullscreen hide-overlay transition="dialog-bottom-transition">
+                                    <v-card dark>
+                                        <v-toolbar dark color="primary">
+                                            <v-btn icon dark @click="print = false; toPrint = false">
+                                                <v-icon>mdi-close</v-icon>
+                                            </v-btn>
+                                            <v-toolbar-title>Attendance</v-toolbar-title>
+                                        </v-toolbar>
+                                        <div v-if="print">
+                                            <AttendanceView :attendance="attendance_packaged" :key="viewerwKey" :toPrint="toPrint" :supervisor="supervisor" />
+                                        </div>
 
-                            </v-card>
-                        </v-dialog>
+                                    </v-card>
+                                </v-dialog>
 
-                        <!-- Preview -->
-                        <v-dialog
-                            v-model="confirmPrint"
-                            max-width="290"
-                        >
-                            <v-card>
-                                <v-card-title class="headline">Confirm Attendance</v-card-title>
+                                <!-- Preview -->
+                                <v-dialog
+                                    v-model="confirmPrint"
+                                    max-width="290"
+                                >
+                                    <v-card>
+                                        <v-card-title class="headline">Confirm Attendance</v-card-title>
 
-                                <v-card-text>
-                                    Are you sure you want to confirm? Check all the details of the attendance before submission.
-                                </v-card-text>
+                                        <v-card-text>
+                                            Are you sure you want to confirm? Check all the details of the attendance before submission.
+                                        </v-card-text>
 
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
 
-                                    <v-btn
-                                        color="red darken-1"
-                                        text
-                                        @click="confirmPrint = false"
-                                    >
-                                        Cancel
-                                    </v-btn>
+                                            <v-btn
+                                                color="red darken-1"
+                                                text
+                                                @click="confirmPrint = false"
+                                            >
+                                                Cancel
+                                            </v-btn>
 
-                                    <v-btn
-                                        color="primary"
-                                        text
-                                        @click="confirmAttendance"
-                                    >
-                                        Confirm
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
+                                            <v-btn
+                                                color="primary"
+                                                text
+                                                @click="confirmAttendance"
+                                            >
+                                                Confirm
+                                            </v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
 
-                        <!-- Print -->
-                        <v-dialog
-                            v-model="confirmReject"
-                            max-width="290"
-                        >
-                            <v-card>
-                                <v-card-title class="headline">Reject Attendance</v-card-title>
+                                <!-- Print -->
+                                <v-dialog
+                                    v-model="confirmReject"
+                                    max-width="290"
+                                >
+                                    <v-card>
+                                        <v-card-title class="headline">Reject Attendance</v-card-title>
 
-                                <v-card-text>
-                                    Are you sure you want to reject? Check all the details of the attendance before rejecting.
-                                </v-card-text>
+                                        <v-card-text>
+                                            Are you sure you want to reject? Check all the details of the attendance before rejecting.
+                                        </v-card-text>
 
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
 
-                                    <v-btn
-                                        color="red darken-1"
-                                        text
-                                        @click="confirmReject = false"
-                                    >
-                                        Cancel
-                                    </v-btn>
+                                            <v-btn
+                                                color="red darken-1"
+                                                text
+                                                @click="confirmReject = false"
+                                            >
+                                                Cancel
+                                            </v-btn>
 
-                                    <v-btn
-                                        color="primary"
-                                        text
-                                        @click="rejectAttendance"
-                                    >
-                                        Reject
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
+                                            <v-btn
+                                                color="primary"
+                                                text
+                                                @click="rejectAttendance"
+                                            >
+                                                Reject
+                                            </v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
 
-                    </v-toolbar>
-                </v-sheet>
+                            </v-toolbar>
+                        </v-sheet>
+                    </v-col>
+                </v-row>
             </v-card>
         </v-col>
     </v-row>
@@ -634,11 +644,17 @@
 </script>
 
 <style scoped>
-    .form-toolbar {
+    .toolbar-container {
         width:                  100%;
         position:               fixed;
         z-index:                4;
         bottom:                 35px;
         right:                  0;
+    }
+    .toolbar-container col {
+        width:                  100%;
+    }
+    .form-toolbar {
+        width:                  100%;
     }
 </style>
