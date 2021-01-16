@@ -170,7 +170,7 @@
                             <v-icon right>mdi-send-circle-outline</v-icon>
                         </v-btn>
                         
-                        <!-- Print and Preview -->
+                        <!-- Reject -->
                         <v-dialog v-model="print" fullscreen hide-overlay transition="dialog-bottom-transition">
                             <v-card dark>
                                 <v-toolbar dark color="primary">
@@ -186,6 +186,7 @@
                             </v-card>
                         </v-dialog>
 
+                        <!-- Preview -->
                         <v-dialog
                             v-model="confirmPrint"
                             max-width="290"
@@ -219,6 +220,7 @@
                             </v-card>
                         </v-dialog>
 
+                        <!-- Print -->
                         <v-dialog
                             v-model="confirmReject"
                             max-width="290"

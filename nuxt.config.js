@@ -69,7 +69,7 @@ export default {
   
   // dotenv
   env: {
-    BASE_URL: process.env.BASE_URL,
+    BASE_URL: process.env.BASE_URL || 'http://localhost:3000',
     ATTENDANCE_URL: process.env.ATTENDANCE_URL,
     ATTENDANCE_URL_CONFIRM: process.env.ATTENDANCE_URL_CONFIRM,
     ATTENDANCE_URL_REJECT: process.env.ATTENDANCE_URL_REJECT

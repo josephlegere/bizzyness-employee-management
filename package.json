@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.12.2",
+    "@nuxtjs/vuetify": "^1.11.2",
     "core-js": "^3.6.5",
     "dotenv": "^8.2.0",
     "jspdf": "^2.2.0",
@@ -20,7 +21,5 @@
     "vue-moment": "^4.1.0",
     "vue-pdf": "^4.2.0"
   },
-  "devDependencies": {
-    "@nuxtjs/vuetify": "^1.11.2"
-  }
+  "devDependencies": {}
 }
