@@ -22,7 +22,7 @@
 					class="mb-15"
 					v-model="selectAttendance"
                     :headers="headers"
-                    :items="attendance_formatted"
+                    :items="attendance"
                     :search="search"
                     item-key="index"
 					group-by="date"

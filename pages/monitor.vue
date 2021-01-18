@@ -22,7 +22,7 @@
 					class="mb-15"
 					v-model="selectAttendance"
                     :headers="headers"
-                    :items="attendance_formatted"
+                    :items="attendance"
                     :search="search"
                     item-key="index"
 					group-by="date"
@@ -300,8 +300,8 @@
 				// this.$store.dispatch('invoices/get', { dates: this.datefilter, tenant: this.tenant });
 			},
 			statusColorCoding (status) {
-				if (status == 'REGULAR') return 'green'
-				else if (status == 'OVERTIME') return 'blue'
+				if (status == 'REG') return 'green'
+				else if (status == 'OT') return 'blue'
 				else return 'red'
             },
             async confirmAttendance () {
