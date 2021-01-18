@@ -31,19 +31,24 @@ export const actions = {
 
 		commit("setMonitor", _list);
     },
-    async confirm({}, list) {
+    async confirmChecker({ commit }, list) {
         const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_CONFIRM}`, { list });
-        console.log(response)
+
+        commit("stripChecker", list);
     },
-    async reject({}, list) {
+    async rejectChecker({ commit }, list) {
         const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_REJECT}`, { list });
-        console.log(response)
+
+        commit("stripChecker", list);
     }
 }
 
 export const mutations = {
     setChecker: (state, attendance) => (state.checker_list = attendance),
-    setMonitor: (state, attendance) => (state.monitor_list = attendance)
+    setMonitor: (state, attendance) => (state.monitor_list = attendance),
+
+    // clears/strips out data on checkerlist not needed anymore
+    stripChecker: (state, attendance) => (state.checker_list = _.difference(state.checker_list, attendance))
 };
 
 function attendance_formatted(attendance) {

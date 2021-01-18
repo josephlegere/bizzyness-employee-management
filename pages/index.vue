@@ -351,12 +351,12 @@
                 this.toPrint = true;
                 this.print = true;
                 console.log('confirm');
-                await this.$store.dispatch('attendance/confirm', this.selectAttendance);
+                await this.$store.dispatch('attendance/confirmChecker', this.selectAttendance);
             },
             async rejectAttendance () {
                 this.confirmReject = false; 
                 console.log('reject');
-                await this.$store.dispatch('attendance/reject', this.selectAttendance);
+                await this.$store.dispatch('attendance/rejectChecker', this.selectAttendance);
             }
 		},
 		computed: {
