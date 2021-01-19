@@ -15,7 +15,11 @@ export const actions = {
             st: "for confirmation",
             dt: "current"
         });
-        _list = attendance_formatted(response.data.data);
+        let { dayoffs } = response.data;
+        _list = attendance_formatted({
+            attendance: response.data.data,
+            dayoffs
+        });
 
 		commit("setChecker", _list);
     },
@@ -27,7 +31,11 @@ export const actions = {
             st: "confirmed",
             dt: "current"
         });
-        _list = attendance_formatted(response.data.data);
+        let { dayoffs } = response.data;
+        _list = attendance_formatted({
+            attendance: response.data.data,
+            dayoffs
+        });
 
 		commit("setMonitor", _list);
     },
@@ -51,8 +59,9 @@ export const mutations = {
     stripChecker: (state, attendance) => (state.checker_list = _.difference(state.checker_list, attendance))
 };
 
-function attendance_formatted(attendance) {
+function attendance_formatted(data) {//paramter is one as long as its all related to attendance, timings
     let local_index = 1;
+    let { attendance, dayoffs } = data;
 
     return attendance.map((elem) => {
         let _obj = {};
@@ -71,8 +80,8 @@ function attendance_formatted(attendance) {
         // 	date: '20-10-27'
         
         // segregate day and night timings, create sets / sessions of working hours
-        // if set is not divisible by 2 then it means worktime is performed around 12 PM
-        // then we split the worktime that is around 12, split it into 2, morning and afternoon set
+        // if if "in" is morning and "out" is afternoon
+        // we split the worktime that is around 12, split it into 2, morning and afternoon set
         // e.g. 11:30:00 - 12:00:00, 12:00:00 - 13:00:00
         // finally list down all work sites
 
@@ -219,11 +228,15 @@ function attendance_formatted(attendance) {
         let overtime_timings = { in: '', out: '' };
         overtime_timings.list = [];
         
+        // determine if its a weekend
+        if (dayoffs.some(_day => _day.num === moment((elem.timings[0].input).substr(0, 10)).day())) hrTotal += 8;
+        
         // DON'T INCLUDE ANY CONDITION IF TIMING LIST HAS LENGTH GREATER THAN 0
         // loop through each sets then accumulate the work hours to a "variable" to determine attendance status
         // check if overtime starts here in "morning"
         timing_sets.day.forEach(timing => {
             // console.log(moment(timing.out).diff(moment(timing.in), 'hours', true))
+
             let hrs_to_complete_work = workHours - hrTotal;
             hrTotal += moment(timing.out).diff(moment(timing.in), 'hours', true);
 
