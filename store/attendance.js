@@ -31,10 +31,11 @@ export const actions = {
             st: "confirmed",
             dt: "current"
         });
-        let { dayoffs } = response.data;
+        console.log();
+        let { attendance, dayoffs } = response.data.data;
         _list = attendance_formatted({
-            attendance: response.data.data,
-            dayoffs
+            attendance: attendance.list,
+            dayoffs: dayoffs.list
         });
 
 		commit("setMonitor", _list);
