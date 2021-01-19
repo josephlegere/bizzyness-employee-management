@@ -187,17 +187,18 @@ export default {
                                 }
                             }
                         });
+                        
+                        doc.setFont('Helvetica', '');
+                        doc.text(`Approved By: ${this.supervisor.name}`, 158, doc.lastAutoTable.finalY + 20);
 
                         if ((key + 1) < tables_len)
                             doc.addPage();
                     });
 
-                    doc.setFont('Helvetica', '');
                     // doc.text(`Received By:`, 14, doc.lastAutoTable.finalY + 10);
                     // doc.line(40, doc.lastAutoTable.finalY + 10, 74, doc.lastAutoTable.finalY + 10);
                     // doc.text(`Signature:`, 14, doc.lastAutoTable.finalY + 20);
                     // doc.line(40, doc.lastAutoTable.finalY + 20, 74, doc.lastAutoTable.finalY + 20);
-                    doc.text(`Approved By: ${this.supervisor.name}`, 158, doc.lastAutoTable.finalY + 20);
                 }
                 
                 //doc.rect(14, 14, 182, doc.lastAutoTable.finalY - 14); //border
