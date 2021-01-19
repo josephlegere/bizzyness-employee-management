@@ -651,10 +651,16 @@
         bottom:                 35px;
         right:                  0;
     }
-    .toolbar-container col {
+    .toolbar-container .col {
         width:                  100%;
     }
     .form-toolbar {
         width:                  100%;
+        border-radius:          15px 15px 0 0;
+        /* Don't know why border-radius should be repeated for it to work */
+        /* Maybe toolbar has a default border-radius of 0, need to override to work */
+    }
+    .form-toolbar .v-toolbar {
+        border-radius:          15px 15px 0 0;
     }
 </style>
