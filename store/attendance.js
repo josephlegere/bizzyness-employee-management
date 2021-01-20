@@ -15,10 +15,11 @@ export const actions = {
             st: "for confirmation",
             dt: "current"
         });
-        let { dayoffs } = response.data;
+        let { attendance, dayoffs } = response.data.data;
+
         _list = attendance_formatted({
-            attendance: response.data.data,
-            dayoffs
+            attendance: attendance.list,
+            dayoffs: dayoffs.list
         });
 
 		commit("setChecker", _list);
@@ -33,6 +34,7 @@ export const actions = {
         });
         console.log();
         let { attendance, dayoffs } = response.data.data;
+        
         _list = attendance_formatted({
             attendance: attendance.list,
             dayoffs: dayoffs.list
