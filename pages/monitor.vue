@@ -120,7 +120,7 @@
                                 {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
                             </v-icon>
                             <v-chip color="secondary">
-                                {{ items[0].date | moment("dddd, MMMM Do YYYY") }}
+                                {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
                             </v-chip>
                             <v-chip color="secondary">
                                 {{ `Timed In (${items.length})` }}
