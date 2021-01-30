@@ -18,125 +18,128 @@
                         </v-col>
                     </v-row>
                 </v-card-title>
-                <v-data-table
-					class="mb-15"
-					v-model="selectAttendance"
-                    :headers="headers"
-                    :items="attendance"
-                    :search="search"
-                    item-key="index"
-					group-by="date"
-                    show-select
-					show-group-by
-                >
-					<!-- item-key="index" -->
-					<!-- show-select -->
 
-                    <!-- <template v-slot:item="props">
-                        <tr :active="props.selected">
-                            <td>
-                                <v-checkbox
-                                    v-model="selectAttendance"
-                                ></v-checkbox>
-                            </td> -->
-                                    <!-- :label="`Checkbox 1: ${checkbox1.toString()}`" -->
-                            <!-- <td>{{ props.item.employee }}</td>
-                            <td>
-                                <template v-for="timing in props.item.timings.day_min">
-                                    <v-card>
+                <client-only>
+                    <v-data-table
+                        class="mb-15"
+                        v-model="selectAttendance"
+                        :headers="headers"
+                        :items="attendance"
+                        :search="search"
+                        item-key="index"
+                        group-by="date"
+                        show-select
+                        show-group-by
+                    >
+                        <!-- item-key="index" -->
+                        <!-- show-select -->
+
+                        <!-- <template v-slot:item="props">
+                            <tr :active="props.selected">
+                                <td>
+                                    <v-checkbox
+                                        v-model="selectAttendance"
+                                    ></v-checkbox>
+                                </td> -->
+                                        <!-- :label="`Checkbox 1: ${checkbox1.toString()}`" -->
+                                <!-- <td>{{ props.item.employee }}</td>
+                                <td>
+                                    <template v-for="timing in props.item.timings.day_min">
+                                        <v-card>
+                                            {{timing}}
+                                        </v-card>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template v-for="timing in props.item.timings.noon_min">
+                                        <v-card>
+                                            {{timing}}
+                                        </v-card>
+                                    </template>
+                                </td>
+                                <td>{{ props.item.otstart }}</td>
+                                <td>{{ props.item.otend }}</td>
+                                <td>{{ props.item.othours }}</td>
+                                <td>{{ props.item.location }}</td>
+                                <td>
+                                    <v-chip
+                                        :color="statusColorCoding(props.item.status)"
+                                        dark
+                                    >
+                                        {{ props.item.status }}
+                                    </v-chip>
+                                </td>
+                            </tr> 
+                        </template> -->
+
+                        <template v-slot:item.dayin="{ item }">
+                            <template v-for="timing in item.timings.day_min">
+                                <v-card>
+                                    <v-card-text class=text-center>
                                         {{timing}}
-                                    </v-card>
-                                </template>
-                            </td>
-                            <td>
-                                <template v-for="timing in props.item.timings.noon_min">
-                                    <v-card>
+                                    </v-card-text>
+                                </v-card>
+                            </template>
+                        </template>
+
+                        <template v-slot:item.nightin="{ item }">
+                            <template v-for="timing in item.timings.noon_min">
+                                <v-card class="my-2">
+                                    <v-card-text class=text-center>
                                         {{timing}}
-                                    </v-card>
-                                </template>
-                            </td>
-                            <td>{{ props.item.otstart }}</td>
-                            <td>{{ props.item.otend }}</td>
-                            <td>{{ props.item.othours }}</td>
-                            <td>{{ props.item.location }}</td>
-                            <td>
-                                <v-chip
-                                    :color="statusColorCoding(props.item.status)"
-                                    dark
-                                >
-                                    {{ props.item.status }}
+                                    </v-card-text>
+                                </v-card>
+                            </template>
+                        </template>
+
+                        <template v-slot:item.ottimings="{ item }">
+                            <!-- <v-card v-if="item.ottimings !== ''" class="my-2">
+                                <v-card-text class=text-center>
+                                    {{item.ottimings}}
+                                </v-card-text>
+                            </v-card> -->
+                            <template v-for="timing in item.ottimings">
+                                <v-card class="my-2">
+                                    <v-card-text class=text-center>
+                                        {{timing}}
+                                    </v-card-text>
+                                </v-card>
+                            </template>
+                        </template>
+
+                        <template v-slot:item.status="{ item }">
+                            <v-chip
+                                :color="statusColorCoding(item.status)"
+                                dark
+                            >
+                                {{ item.status }}
+                            </v-chip>
+                        </template>
+
+                        <template v-slot:group.header="{items, isOpen, toggle}">
+                            <th colspan="8">
+                                <v-icon @click="toggle">
+                                    {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
+                                </v-icon>
+                                <v-chip color="secondary">
+                                    {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
                                 </v-chip>
-                            </td>
-                        </tr> 
-                    </template> -->
-
-					<template v-slot:item.dayin="{ item }">
-						<template v-for="timing in item.timings.day_min">
-                            <v-card>
-                                <v-card-text class=text-center>
-                                    {{timing}}
-                                </v-card-text>
-                            </v-card>
+                                <v-chip color="secondary">
+                                    {{ `Timed In (${items.length})` }}
+                                </v-chip>
+                            </th>
                         </template>
-					</template>
 
-					<template v-slot:item.nightin="{ item }">
-						<template v-for="timing in item.timings.noon_min">
-                            <v-card class="my-2">
-                                <v-card-text class=text-center>
-                                    {{timing}}
-                                </v-card-text>
-                            </v-card>
-                        </template>
-					</template>
-
-                    <template v-slot:item.ottimings="{ item }">
-                        <!-- <v-card v-if="item.ottimings !== ''" class="my-2">
-                            <v-card-text class=text-center>
-                                {{item.ottimings}}
-                            </v-card-text>
-                        </v-card> -->
-                        <template v-for="timing in item.ottimings">
-                            <v-card class="my-2">
-                                <v-card-text class=text-center>
-                                    {{timing}}
-                                </v-card-text>
-                            </v-card>
-                        </template>
-					</template>
-
-					<template v-slot:item.status="{ item }">
-						<v-chip
-							:color="statusColorCoding(item.status)"
-							dark
-						>
-							{{ item.status }}
-						</v-chip>
-					</template>
-
-					<template v-slot:group.header="{items, isOpen, toggle}">
-						<th colspan="8">
-                            <v-icon @click="toggle">
-                                {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
-                            </v-icon>
-                            <v-chip color="secondary">
-                                {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
-                            </v-chip>
-                            <v-chip color="secondary">
-                                {{ `Timed In (${items.length})` }}
-                            </v-chip>
-                        </th>
-					</template>
-
-                    <!-- <template slot="body.append">
-                        <tr>
-                            <th class="d-flex justify-space-between align-center">TOTAL <span class="d-sm-none">{{total}}</span></th>
-                            <th colspan="2" class="pa-0"></th>
-                            <th class="d-none d-sm-block align-center">{{total.toFixed(2)}}</th> 
-                            <th colspan="2" class="pa-0"></th>
-                        </tr>
-                    </template> -->
-                </v-data-table>
+                        <!-- <template slot="body.append">
+                            <tr>
+                                <th class="d-flex justify-space-between align-center">TOTAL <span class="d-sm-none">{{total}}</span></th>
+                                <th colspan="2" class="pa-0"></th>
+                                <th class="d-none d-sm-block align-center">{{total.toFixed(2)}}</th> 
+                                <th colspan="2" class="pa-0"></th>
+                            </tr>
+                        </template> -->
+                    </v-data-table>
+                </client-only>
                 
                 <v-row
                     class="toolbar-container"
@@ -312,9 +315,7 @@
                 confirmPrint: false,
                 print: false,
                 toPrint: false,
-                supervisor: {
-                    name: 'Joby Legere'
-                }
+                supervisor: null
 			}
 		},
 		methods: {
@@ -357,11 +358,15 @@
                 this.confirmReject = false; 
                 console.log('reject');
                 await this.$store.dispatch('attendance/rejectChecker', this.selectAttendance);
+            },
+            getLoggedUser () {
+                
             }
 		},
 		computed: {
             ...mapState({
-                attendance: state => state.attendance.checker_list
+                attendance: state => state.attendance.checker_list,
+                loggeduser: state => state.auth.loggeduser
             }),
 			total: function() {
 				return 0
@@ -633,8 +638,15 @@
 			// 	loggeduser: state => state.auth.loggeduser
 			// })
         },
+        async beforeCreate () {
+            await this.$store.dispatch('attendance/getChecker', {tenant: this.$store.state.auth.loggeduser});
+            // console.log(this.attendance);
+        },
         async asyncData({store}) {
-            await store.dispatch('attendance/getChecker', {date: 'date', tenant: 'tenant'});
+            // console.log(store.state.auth.loggeduser);
+            // this should load on the server before client loads
+            // but its not retrieving any data and won't load sync on client
+            // await store.dispatch('attendance/getChecker', {tenant: store.state.auth.loggeduser});
         },
 		components: {
             DateRange,

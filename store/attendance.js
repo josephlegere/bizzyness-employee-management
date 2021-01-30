@@ -7,13 +7,15 @@ export const state = () => ({
 });
 
 export const actions = {
-    async getChecker({ commit }, { date, tenant }) {
+    async getChecker({ commit }, { tenant }) {
         let _list = [];
+        console.log(tenant);
 
         const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}`,
         {
             st: "for confirmation",
-            dt: "current"
+            dt: "current",
+            tenant
         });
         let { attendance, dayoffs } = response.data.data;
 
@@ -24,15 +26,15 @@ export const actions = {
 
 		commit("setChecker", _list);
     },
-    async getMonitor({ commit }, { date, tenant }) {
+    async getMonitor({ commit }, { tenant }) {
         let _list = [];
 
         const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}`,
         {
             st: "confirmed",
-            dt: "current"
+            dt: "current",
+            tenant
         });
-        console.log();
         let { attendance, dayoffs } = response.data.data;
         
         _list = attendance_formatted({

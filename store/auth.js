@@ -25,22 +25,24 @@ export const actions = {
 				.doc(uid)
 				.get()
 				.then(doc => {
-					let _user = doc.data();
+                    let _user = doc.data();
+                    
 					_details = {
 						id: `users/${uid}`,
                         name: _user.name,
 						account: _user.tenant_group.account,
-                        tenantid: _user.tenant_group.tenantid
+                        tenantid: _user.tenant_group.tenantid,
+                        system_config: _user.tenant_group.system_config
 					}
 				})
 				.catch(err => {
 					console.log("Error getting documents", err);
 				});
 
-			let { id, name, account, tenantid } = _details;
+			let { id, name, account, tenantid, system_config } = _details;
 
 			//Set the user locally
-			commit("setUser", { email, uid, name, id, account, tenantid });
+			commit("setUser", { email, uid, name, id, account, tenantid, system_config });
 		} catch (err) {
 			console.error(err.message);
 			throw err;

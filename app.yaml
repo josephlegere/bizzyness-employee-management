@@ -1,3 +1,7 @@
+## TESTING
+service: employee-management-testing
+
+## LIVE (w/o Service)
 runtime: nodejs10
 
 instance_class: F2
