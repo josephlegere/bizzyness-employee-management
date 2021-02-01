@@ -191,7 +191,7 @@
                                             <v-toolbar-title>Attendance</v-toolbar-title>
                                         </v-toolbar>
                                         <div v-if="print">
-                                            <AttendanceView :attendance="attendance_packaged" :key="viewerwKey" :toPrint="toPrint" :supervisor="supervisor" />
+                                            <AttendanceView :attendance="attendance_packaged" :key="viewerwKey" :toPrint="toPrint" :supervisor="loggeduser" />
                                         </div>
 
                                     </v-card>
@@ -353,14 +353,13 @@
                 this.print = true;
                 console.log('confirm');
                 await this.$store.dispatch('attendance/confirmChecker', this.selectAttendance);
+                this.selectAttendance = [];
             },
             async rejectAttendance () {
                 this.confirmReject = false; 
                 console.log('reject');
                 await this.$store.dispatch('attendance/rejectChecker', this.selectAttendance);
-            },
-            getLoggedUser () {
-                
+                this.selectAttendance = [];
             }
 		},
 		computed: {
@@ -639,6 +638,7 @@
 			// })
         },
         async beforeCreate () {
+            this.supervisor = this.$store.state.auth.loggeduser;
             await this.$store.dispatch('attendance/getChecker', {tenant: this.$store.state.auth.loggeduser});
             // console.log(this.attendance);
         },

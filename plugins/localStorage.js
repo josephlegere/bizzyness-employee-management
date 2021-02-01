@@ -1,25 +1,38 @@
 // vuex persistence state, so store data remains even after refresh
 
 import createPersistedState from 'vuex-persistedstate';
-import * as Cookies from 'js-cookie';
-import cookie from 'cookie';
 
-export default ({ store, req }) => {
+export default ({store, app}) => {
     createPersistedState({
         storage: {
-            getItem: (key) => {
-                // See https://nuxtjs.org/guide/plugins/#using-process-flags
-                if (process.server) {
-                    const parsedCookies = cookie.parse(req.headers.cookie);
-                    return parsedCookies[key];
-                } else {
-                    return Cookies.get(key);
+            getItem: (vuexKey) => {
+                const vuex = {};
+                const cookies = app.$cookies.getAll();
+                for (const subKey of Object.keys(cookies)) {
+                    if (subKey.split('_')[0] === vuexKey) {
+                        const modKey = subKey.replace(vuexKey + '_', '');
+                        vuex[modKey] = cookies[subKey];
+                    }
                 }
+                return vuex;
             },
-            // Please see https://github.com/js-cookie/js-cookie#json, on how to handle JSON.
-            setItem: (key, value) =>
-                Cookies.set(key, value, { expires: 365, secure: false }),
-            removeItem: key => Cookies.remove(key)
+            setItem: (vuexKey, value) => {
+                const json = JSON.parse(value);
+                for (const k of Object.keys(json)) {
+                    const subKey = vuexKey + '_' + k;
+                    app.$cookies.set(subKey, json[k], {path: '/', maxAge: 60 * 60 * 24 * 7, secure: false});
+                }
+                return true;
+            },
+            removeItem: (vuexKey) => {
+                const cookies = app.$cookies.getAll();
+                for (const subKey of Object.keys(cookies)) {
+                    if (subKey.split('_')[0] === vuexKey) {
+                        app.$cookies.remove(subKey);
+                    }
+                }
+                return true;
+            }
         }
-    })(store);
-};
+    })(store)
+}

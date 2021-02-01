@@ -9,10 +9,11 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.12.2",
+    "@nuxtjs/axios": "^5.12.5",
     "@nuxtjs/firebase": "^7.4.1",
     "@nuxtjs/vuetify": "^1.11.2",
     "cookie": "^0.4.1",
+    "cookie-universal-nuxt": "^2.1.4",
     "cookieparser": "^0.1.0",
     "core-js": "^3.6.5",
     "dotenv": "^8.2.0",
