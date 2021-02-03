@@ -95,6 +95,7 @@
 
 <script>
 export default {
+	name: 'default-layout',
 	data () {
 		return {
 			drawer: true,

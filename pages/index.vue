@@ -352,13 +352,13 @@
                 this.toPrint = true;
                 this.print = true;
                 console.log('confirm');
-                await this.$store.dispatch('attendance/confirmChecker', this.selectAttendance);
+                await this.$store.dispatch('attendance/confirmChecker', { tenant: this.$store.state.auth.loggeduser, list: this.selectAttendance });
                 this.selectAttendance = [];
             },
             async rejectAttendance () {
                 this.confirmReject = false; 
                 console.log('reject');
-                await this.$store.dispatch('attendance/rejectChecker', this.selectAttendance);
+                await this.$store.dispatch('attendance/rejectChecker', { tenant: this.$store.state.auth.loggeduser, list: this.selectAttendance });
                 this.selectAttendance = [];
             }
 		},
@@ -637,9 +637,9 @@
 			// 	loggeduser: state => state.auth.loggeduser
 			// })
         },
-        async beforeCreate () {
+        async created () {
             this.supervisor = this.$store.state.auth.loggeduser;
-            await this.$store.dispatch('attendance/getChecker', {tenant: this.$store.state.auth.loggeduser});
+            await this.$store.dispatch('attendance/getChecker', { tenant: this.$store.state.auth.loggeduser });
             // console.log(this.attendance);
         },
         async asyncData({store}) {

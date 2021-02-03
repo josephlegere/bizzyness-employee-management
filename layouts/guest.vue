@@ -29,6 +29,7 @@
 <script>
 
 export default {
+	name: 'guest-layout',
 	data () {
 		return {
 			title: 'Accounting'

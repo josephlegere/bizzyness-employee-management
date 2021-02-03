@@ -572,7 +572,7 @@
 			// 	loggeduser: state => state.auth.loggeduser
 			// })
         },
-        async beforeCreate() {
+        async created() {
             await this.$store.dispatch('attendance/getMonitor', {tenant: this.$store.state.auth.loggeduser});
         },
         async asyncData({store}) {
