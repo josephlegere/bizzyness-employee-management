@@ -125,7 +125,7 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
         do {
         // for (let i = 0; i < _len; i++) {
             let timing = timings[count];
-            let _time = timing.input.substr(11);
+            let _datetime = moment(timing.input).format('YYYY-MM-DD HH:mm:ss.SS');
             let _loc_regex = new RegExp(timing.place.replace(/[^a-zA-Z ]/g, ''), 'i');
             // .replace(/[^a-zA-Z ]/g, '') <- this code now enables comparison of strings even with special char
             // it removes special char from string, which made it not compare strings because it messes up with the regex
@@ -135,7 +135,7 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
             // console.log(timing)
 
             if (Object.keys(_set).length === 0) {
-                _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
+                _set[(timing.type === 0 ? 'in' : 'out')] = _datetime;
 
                 if ((locations.replace(/[^a-zA-Z ]/g, '')).search(_loc_regex) === -1)
                     _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');
@@ -145,7 +145,7 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
                 count = 0;
             }
             else if (Object.keys(_set)[0] !== (timing.type === 0 ? 'in' : 'out')) {// assuming the length of "set" is 1
-                _set[(timing.type === 0 ? 'in' : 'out')] = timing.input;
+                _set[(timing.type === 0 ? 'in' : 'out')] = _datetime;
 
                 if ((locations.replace(/[^a-zA-Z ]/g, '')).search(_loc_regex) === -1 && (Object.values(_set_location)[0].replace(/[^a-zA-Z ]/g, '')).search(_loc_regex) === -1)
                     _set_location[(timing.type === 0 ? 'in' : 'out')] = (timing.place.replace(/\s/g, '') !== '' ? timing.place : '');

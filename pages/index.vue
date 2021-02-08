@@ -168,7 +168,7 @@
 
                                 <v-btn
                                     outlined
-                                    @click="print = true"
+                                    @click="printView = true"
                                 >
                                     <v-icon>mdi-printer-search</v-icon>
                                 </v-btn>
@@ -182,15 +182,15 @@
                                 </v-btn>
                                 
                                 <!-- Reject -->
-                                <v-dialog v-model="print" fullscreen hide-overlay transition="dialog-bottom-transition">
+                                <v-dialog v-model="printView" fullscreen hide-overlay transition="dialog-bottom-transition">
                                     <v-card dark>
                                         <v-toolbar dark color="primary">
-                                            <v-btn icon dark @click="print = false; toPrint = false">
+                                            <v-btn icon dark @click="printView = false; toPrint = false">
                                                 <v-icon>mdi-close</v-icon>
                                             </v-btn>
                                             <v-toolbar-title>Attendance</v-toolbar-title>
                                         </v-toolbar>
-                                        <div v-if="print">
+                                        <div v-if="printView">
                                             <AttendanceView :attendance="attendance_packaged" :key="viewerwKey" :toPrint="toPrint" :supervisor="loggeduser" />
                                         </div>
 
@@ -313,7 +313,7 @@
                 ],
                 confirmReject: false,
                 confirmPrint: false,
-                print: false,
+                printView: false,
                 toPrint: false,
                 supervisor: null
 			}
@@ -350,7 +350,7 @@
             async confirmAttendance () {
                 this.confirmPrint = false;
                 this.toPrint = true;
-                this.print = true;
+                this.printView = true;
                 console.log('confirm');
                 await this.$store.dispatch('attendance/confirmChecker', { tenant: this.$store.state.auth.loggeduser, list: this.selectAttendance });
                 this.selectAttendance = [];
