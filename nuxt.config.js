@@ -25,6 +25,11 @@ export default {
     { src: '~/plugins/localStorage.js' }
   ],
 
+  // Router settings
+  router: {
+    middleware: ['authenticated']
+  },
+
   pwa: {
     workbox: {
       importScripts: ['/firebase-auth-sw.js'],

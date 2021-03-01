@@ -27,10 +27,9 @@
                     item-key="index"
 					group-by="date"
                     show-select
-					show-group-by
                 >
-					<!-- item-key="index" -->
-					<!-- show-select -->
+                    <!-- fixed-header -->
+                    <!-- height="600" -->
 
                     <!-- <template v-slot:item="props">
                         <tr :active="props.selected">

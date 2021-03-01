@@ -29,10 +29,9 @@
                         item-key="index"
                         group-by="date"
                         show-select
-                        show-group-by
                     >
-                        <!-- item-key="index" -->
-                        <!-- show-select -->
+                        <!-- fixed-header -->
+                        <!-- height="600" -->
 
                         <!-- <template v-slot:item="props">
                             <tr :active="props.selected">
@@ -72,7 +71,7 @@
                             </tr> 
                         </template> -->
 
-                        <template v-slot:item.dayin="{ item }">
+                        <template v-slot:item.day="{ item }">
                             <template v-for="timing in item.timings.day_min">
                                 <v-card>
                                     <v-card-text class=text-center>
@@ -82,7 +81,7 @@
                             </template>
                         </template>
 
-                        <template v-slot:item.nightin="{ item }">
+                        <template v-slot:item.night="{ item }">
                             <template v-for="timing in item.timings.noon_min">
                                 <v-card class="my-2">
                                     <v-card-text class=text-center>
@@ -181,7 +180,7 @@
                                     <v-icon right>mdi-send-circle-outline</v-icon>
                                 </v-btn>
                                 
-                                <!-- Reject -->
+                                <!-- Print View -->
                                 <v-dialog v-model="printView" fullscreen hide-overlay transition="dialog-bottom-transition">
                                     <v-card dark>
                                         <v-toolbar dark color="primary">
@@ -197,7 +196,7 @@
                                     </v-card>
                                 </v-dialog>
 
-                                <!-- Preview -->
+                                <!-- Submit Confirm -->
                                 <v-dialog
                                     v-model="confirmPrint"
                                     max-width="290"
@@ -231,7 +230,7 @@
                                     </v-card>
                                 </v-dialog>
 
-                                <!-- Print -->
+                                <!-- Reject -->
                                 <v-dialog
                                     v-model="confirmReject"
                                     max-width="290"
@@ -298,12 +297,12 @@
 					},
 					{
                         text: 'Morning',
-                        value: 'dayin',
+                        value: 'day',
                         // width: '30%'
                     },
 					{
                         text: 'Afternoon',
-                        value: 'nightin',
+                        value: 'night',
                         // width: '30%'
                     },
 					{ text: 'OT Timings', value: 'ottimings' },
