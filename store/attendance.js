@@ -41,12 +41,12 @@ export const actions = {
 		commit("setMonitor", _list);
     },
     async confirmChecker({ commit }, { tenant, list }) {
-        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_CONFIRM}`, { tenant, list });
+        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_VERIFY}/confirm`, { tenant, list });
 
         commit("stripChecker", list);
     },
     async rejectChecker({ commit }, { tenant, list }) {
-        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_REJECT}`, { tenant, list });
+        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_VERIFY}/reject`, { tenant, list });
 
         commit("stripChecker", list);
     }

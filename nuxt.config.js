@@ -108,6 +108,7 @@ export default {
     BASE_URL: process.env.BASE_URL || 'http://localhost:3000',
     CLIENT_TYPE: process.env.CLIENT_TYPE,
     ATTENDANCE_URL: process.env.ATTENDANCE_URL,
+    ATTENDANCE_URL_VERIFY: process.env.ATTENDANCE_URL_VERIFY,
     ATTENDANCE_URL_CONFIRM: process.env.ATTENDANCE_URL_CONFIRM,
     ATTENDANCE_URL_REJECT: process.env.ATTENDANCE_URL_REJECT
   }
