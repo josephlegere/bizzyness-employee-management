@@ -10,12 +10,9 @@ export const actions = {
     async getChecker({ commit }, { tenant }) {
         let _list = [];
         console.log(tenant);
+        let tenant_id_only = tenant.tenantid.split('/')[1]; //not a reference, without the "tenant/" prefix
 
-        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}`,
-        {
-            task: "checker",
-            tenant
-        });
+        const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/checker/${tenant_id_only}`);
         let { attendance, dayoffs } = response.data.data;
 
         _list = attendance_formatted({
@@ -27,12 +24,9 @@ export const actions = {
     },
     async getMonitor({ commit }, { tenant }) {
         let _list = [];
+        let tenant_id_only = tenant.tenantid.split('/')[1]; //not a reference, without the "tenant/" prefix
 
-        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}`,
-        {
-            task: "monitor",
-            tenant
-        });
+        const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/monitor/${tenant_id_only}`);
         let { attendance, dayoffs } = response.data.data;
         
         _list = attendance_formatted({

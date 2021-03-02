@@ -22,7 +22,8 @@ export default {
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
     "~/plugins/vue-moment.js",
-    { src: '~/plugins/localStorage.js' }
+    '~/plugins/localStorage.js',
+    { src: '~/plugins/axiosConfig.js', mode: 'client' }
   ],
 
   // Router settings
@@ -105,6 +106,7 @@ export default {
   // dotenv
   env: {
     BASE_URL: process.env.BASE_URL || 'http://localhost:3000',
+    CLIENT_TYPE: process.env.CLIENT_TYPE,
     ATTENDANCE_URL: process.env.ATTENDANCE_URL,
     ATTENDANCE_URL_CONFIRM: process.env.ATTENDANCE_URL_CONFIRM,
     ATTENDANCE_URL_REJECT: process.env.ATTENDANCE_URL_REJECT
