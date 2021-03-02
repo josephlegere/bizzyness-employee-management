@@ -30,6 +30,7 @@ export const actions = {
 					_details = {
 						id: `users/${uid}`,
                         name: _user.name,
+						employee_code: _user.employee_code,
 						account: _user.tenant_group.account,
                         tenantid: _user.tenant_group.tenantid,
                         system_config: _user.tenant_group.system_config
@@ -39,7 +40,10 @@ export const actions = {
 					console.log("Error getting documents", err);
 				});
 
-			let { id, name, account, tenantid, system_config } = _details;
+			let { id, name, employee_code, account, tenantid, system_config } = _details;
+			let toCommit = { email, uid, name, id, account, tenantid, system_config };
+
+			if (employee_code) toCommit = { ...toCommit, employee_code };
 
 			if (system_config.server_type.type === 'hybrid_lamp_fire') {
 				this.$axios.setHeader('external_api', system_config.server_host.api);
@@ -47,7 +51,7 @@ export const actions = {
         	this.$axios.setHeader('server_type', system_config.server_type.type);
 
 			//Set the user locally
-			commit("setUser", { email, uid, name, id, account, tenantid, system_config });
+			commit("setUser", toCommit);
 		} catch (err) {
 			console.error(err.message);
 			throw err;
