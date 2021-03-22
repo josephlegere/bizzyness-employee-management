@@ -33,15 +33,16 @@ export const actions = {
 						employee_code: _user.employee_code,
 						account: _user.tenant_group.account,
                         tenantid: _user.tenant_group.tenantid,
-                        system_config: _user.tenant_group.system_config
+                        system_config: _user.tenant_group.system_config,
+						daysoff: _user.tenant_group.daysoff
 					}
 				})
 				.catch(err => {
 					console.log("Error getting documents", err);
 				});
 
-			let { id, name, employee_code, account, tenantid, system_config } = _details;
-			let toCommit = { email, uid, name, id, account, tenantid, system_config };
+			let { id, name, employee_code, account, tenantid, system_config, daysoff } = _details;
+			let toCommit = { email, uid, name, id, account, tenantid, system_config, daysoff };
 
 			if (employee_code) toCommit = { ...toCommit, employee_code };
 

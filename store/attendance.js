@@ -11,31 +11,31 @@ export const actions = {
         let _list = [];
         console.log(tenant);
 
-        let { tenantid, uid } = tenant;
+        let { tenantid, uid, daysoff } = tenant;
 
         let tenant_id_only = tenantid.split('/')[1]; //not a reference, without the "tenant/" prefix
 
         const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/${tenant_id_only}/${uid}?task=checker`);
-        let { attendance, dayoffs } = response.data.data;
+        let { attendance } = response.data.data;
 
         _list = attendance_formatted({
             attendance: attendance.list,
-            dayoffs: dayoffs.list
+            daysoff
         });
 
 		commit("setChecker", _list);
     },
     async getMonitor({ commit }, { tenant }) {
         let _list = [];
-        let { tenantid, uid } = tenant;
+        let { tenantid, uid, daysoff } = tenant;
         let tenant_id_only = tenantid.split('/')[1]; //not a reference, without the "tenant/" prefix
 
         const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/${tenant_id_only}/${uid}?task=monitor`);
-        let { attendance, dayoffs } = response.data.data;
+        let { attendance } = response.data.data;
         
         _list = attendance_formatted({
             attendance: attendance.list,
-            dayoffs: dayoffs.list
+            daysoff
         });
 
 		commit("setMonitor", _list);
@@ -62,7 +62,7 @@ export const mutations = {
 
 function attendance_formatted(data) {//paramter is one as long as its all related to attendance, timings
     let local_index = 1;
-    let { attendance, dayoffs } = data;
+    let { attendance, daysoff } = data;
 
     return attendance.map((elem) => {
         let _obj = {};
@@ -230,7 +230,7 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
         overtime_timings.list = [];
         
         // determine if its a weekend
-        if (dayoffs.some(_day => _day.num === moment((elem.timings[0].input).substr(0, 10)).day())) hrTotal += 8;
+        if (daysoff.some(_day => _day.num === moment((elem.timings[0].input).substr(0, 10)).day())) hrTotal += 8;
         
         // DON'T INCLUDE ANY CONDITION IF TIMING LIST HAS LENGTH GREATER THAN 0
         // loop through each sets then accumulate the work hours to a "variable" to determine attendance status
