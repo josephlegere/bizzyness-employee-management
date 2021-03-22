@@ -9,9 +9,9 @@ export default ({store, $axios}) => {
         let { system_config } = loggeduser;
         
         if (system_config.server_type.type === 'hybrid_lamp_fire') {
-            $axios.setHeader('external_api', system_config.server_host.api);
+            $axios.setHeader('external-api', system_config.server_host.api);
         }
-        $axios.setHeader('server_type', system_config.server_type.type);
+        $axios.setHeader('server-type', system_config.server_type.type);
         
     }
 }

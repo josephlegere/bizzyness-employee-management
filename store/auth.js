@@ -47,9 +47,9 @@ export const actions = {
 			if (employee_code) toCommit = { ...toCommit, employee_code };
 
 			if (system_config.server_type.type === 'hybrid_lamp_fire') {
-				this.$axios.setHeader('external_api', system_config.server_host.api);
+				this.$axios.setHeader('external-api', system_config.server_host.api);
 			}
-        	this.$axios.setHeader('server_type', system_config.server_type.type);
+        	this.$axios.setHeader('server-type', system_config.server_type.type);
 
 			//Set the user locally
 			commit("setUser", toCommit);
