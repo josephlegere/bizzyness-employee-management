@@ -293,7 +293,8 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
         // console.log(overtime_timings);
 
         _obj['index'] = local_index;
-        _obj['uniqueid'] = elem.employee.id;
+        _obj['attendid'] = elem.id;
+        _obj['employeeid'] = elem.employee.id;
         _obj['employee'] = elem.employee.name;
 
         _obj['timings'] = timing_sets;
