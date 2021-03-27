@@ -28,6 +28,7 @@
                         :search="search"
                         item-key="index"
                         group-by="date"
+                        :group-desc="true"
                         show-select
                     >
                         <!-- fixed-header -->
