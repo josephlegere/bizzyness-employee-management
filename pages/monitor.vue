@@ -26,6 +26,7 @@
                     :search="search"
                     item-key="index"
 					group-by="date"
+                    :group-desc="true"
                     show-select
                 >
                     <!-- fixed-header -->
@@ -115,38 +116,27 @@
 
 					<template v-slot:group.header="{items, isOpen, toggle}">
 						<th colspan="8">
-                            <v-icon @click="toggle">
-                                {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
-                            </v-icon>
-                            <v-chip color="secondary">
-                                {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
-                            </v-chip>
-                            <v-chip color="secondary">
-                                {{ `Timed In (${items.length})` }}
-                            </v-chip>
+                            <v-row no-gutters>
+                                <!-- <div class="table-checkbox ml-md-3">
+                                    <v-checkbox @click="selectGroup(items)"></v-checkbox>
+                                </div> -->
+
+                                <v-icon @click="toggle">
+                                    {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
+                                </v-icon>
+                                <v-chip color="secondary">
+                                    {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
+                                </v-chip>
+                                <v-chip color="secondary">
+                                    {{ `Timed In (${items.length})` }}
+                                </v-chip>
+
+                                <v-spacer></v-spacer>
+
+                                <v-btn rounded small @click="selectAttendance = items"><v-icon>mdi-check-box-multiple-outline</v-icon></v-btn>
+                                <v-btn rounded small @click="printGroup(items)">Print</v-btn>
+                            </v-row>
                         </th>
-                        <!-- <th>
-                            <v-menu offset-y>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                        color="secondary"
-                                        dark
-                                        v-bind="attrs"
-                                        v-on="on"
-                                    >
-                                        Awaiting Entries
-                                    </v-btn>
-                                </template>
-                                <v-list>
-                                    <v-list-item
-                                        v-for="(item, index) in 5"
-                                        :key="index"
-                                    >
-                                        <v-list-item-title>Item {{ item }}</v-list-item-title>
-                                    </v-list-item>
-                                </v-list>
-                            </v-menu>
-                        </th> -->
 					</template>
 
                     <template slot="body.append">
@@ -164,7 +154,7 @@
                     no-gutters
                 >
                     <v-col
-                        md="5"
+                        md="2"
                         class="ml-md-auto"
                     >
                         <v-sheet
@@ -172,34 +162,18 @@
                             class="form-toolbar">
                             <v-toolbar
                                 flat
-                                height="60">
-                                
-                                <v-btn
-                                    outlined
-                                    @click="confirmReject = true"
-                                >
-                                    Reject
-                                    <v-icon right>mdi-close-circle-outline</v-icon>
-                                </v-btn>
-
-                                <v-spacer></v-spacer>
+                                height="60"
+                                class="d-flex justify-center">
 
                                 <v-btn
                                     outlined
-                                    @click="printView = true"
+                                    @click="printAttendance"
                                 >
+                                    Print
                                     <v-icon>mdi-printer-search</v-icon>
                                 </v-btn>
                                 
-                                <v-btn
-                                    outlined
-                                    @click="confirmPrint = true"
-                                >
-                                    Confirm
-                                    <v-icon right>mdi-send-circle-outline</v-icon>
-                                </v-btn>
-                                
-                                <!-- Reject -->
+                                <!-- Print -->
                                 <v-dialog v-model="printView" fullscreen hide-overlay transition="dialog-bottom-transition">
                                     <v-card dark>
                                         <v-toolbar dark color="primary">
@@ -209,77 +183,9 @@
                                             <v-toolbar-title>Attendance</v-toolbar-title>
                                         </v-toolbar>
                                         <div v-if="printView">
-                                            <AttendanceView :attendance="attendance_packaged" :key="viewerwKey" :toPrint="toPrint" :supervisor="loggeduser" />
+                                            <AttendanceView :attendance="attendance_packaged" :key="viewerKey" :toPrint="toPrint" :supervisor="loggeduser" />
                                         </div>
 
-                                    </v-card>
-                                </v-dialog>
-
-                                <!-- Preview -->
-                                <v-dialog
-                                    v-model="confirmPrint"
-                                    max-width="290"
-                                >
-                                    <v-card>
-                                        <v-card-title class="headline">Confirm Attendance</v-card-title>
-
-                                        <v-card-text>
-                                            Are you sure you want to confirm? Check all the details of the attendance before submission.
-                                        </v-card-text>
-
-                                        <v-card-actions>
-                                            <v-spacer></v-spacer>
-
-                                            <v-btn
-                                                color="red darken-1"
-                                                text
-                                                @click="confirmPrint = false"
-                                            >
-                                                Cancel
-                                            </v-btn>
-
-                                            <v-btn
-                                                color="primary"
-                                                text
-                                                @click="confirmAttendance"
-                                            >
-                                                Confirm
-                                            </v-btn>
-                                        </v-card-actions>
-                                    </v-card>
-                                </v-dialog>
-
-                                <!-- Print -->
-                                <v-dialog
-                                    v-model="confirmReject"
-                                    max-width="290"
-                                >
-                                    <v-card>
-                                        <v-card-title class="headline">Reject Attendance</v-card-title>
-
-                                        <v-card-text>
-                                            Are you sure you want to reject? Check all the details of the attendance before rejecting.
-                                        </v-card-text>
-
-                                        <v-card-actions>
-                                            <v-spacer></v-spacer>
-
-                                            <v-btn
-                                                color="red darken-1"
-                                                text
-                                                @click="confirmReject = false"
-                                            >
-                                                Cancel
-                                            </v-btn>
-
-                                            <v-btn
-                                                color="primary"
-                                                text
-                                                @click="rejectAttendance"
-                                            >
-                                                Reject
-                                            </v-btn>
-                                        </v-card-actions>
                                     </v-card>
                                 </v-dialog>
 
@@ -329,8 +235,6 @@
 					{ text: 'Locations', value: 'locations', width: '10%' },
 					{ text: 'Status', value: 'status' }
 				],
-                confirmReject: false,
-                confirmPrint: false,
                 printView: false,
                 toPrint: false,
                 supervisor: null
@@ -349,29 +253,50 @@
 				else if (status == 'OT') return 'blue'
 				else return 'red'
             },
-            async confirmAttendance () {
-                this.confirmPrint = false;
-                this.toPrint = true;
-                this.printView = true;
-                console.log('confirm');
-                // await this.$store.dispatch('attendance/confirmChecker', { tenant: this.$store.state.auth.loggeduser, list: this.selectAttendance });
-                this.selectAttendance = [];
+            printAttendance () {
+                return new Promise((resolve, reject) => {
+                    try {
+                        this.toPrint = true;
+                        this.printView = true;
+                        console.log('print');
+                        console.log(this.selectAttendance);
+                        // this.selectAttendance = [];
+                        resolve('Success');
+                    }
+                    catch (err) {
+                        reject('Error');
+                    }
+                });
             },
-            async rejectAttendance () {
-                this.confirmReject = false;
-                console.log('reject');
-                // await this.$store.dispatch('attendance/rejectChecker', { tenant: this.$store.state.auth.loggeduser, list: this.selectAttendance });
-                this.selectAttendance = [];
+            printGroup (items) {
+                this.selectAttendance = items;
+                this.printAttendance().then(() => {
+                    this.selectAttendance = [];
+                });;
+            },
+            selectGroup (items) {
+                this.selectAttendance = (_.isEqual(this.selectAttendance, items) ? [] : items)
             }
 		},
 		computed: {
             ...mapState({
-                attendance: state => state.attendance.monitor_list
+                attendance: state => state.attendance.monitor_list,
+                loggeduser: state => state.auth.loggeduser
             }),
 			total: function() {
 				return 0
 				// return this.invoices.reduce(function(a, c) { return a + Number((c.total) || 0) }, 0);
             },
+            attendance_packaged() {
+                let _attendance = _.cloneDeep(this.selectAttendance);
+
+                return {
+                    layout: _attendance
+                }
+            },
+            viewerKey () { //initially to enable rerender of component, now mainly triggers a function (but still need to return a date)
+                return Date.now(); //opened
+            }
 			// tenant() {
 			// 	return this.loggeduser.tenantid;
 			// },
@@ -381,6 +306,7 @@
 			// })
         },
         async created() {
+            this.supervisor = this.$store.state.auth.loggeduser;
             await this.$store.dispatch('attendance/getMonitor', {tenant: this.$store.state.auth.loggeduser});
         },
         async asyncData({store}) {
@@ -412,5 +338,8 @@
     }
     .form-toolbar .v-toolbar {
         border-radius:          15px 15px 0 0;
+    }
+    .table-checkbox .v-input--checkbox { /* for custom checkboxes found in table */
+        margin-top:             0;
     }
 </style>

@@ -118,15 +118,21 @@
 
                         <template v-slot:group.header="{items, isOpen, toggle}">
                             <th colspan="8">
-                                <v-icon @click="toggle">
-                                    {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
-                                </v-icon>
-                                <v-chip color="secondary">
-                                    {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
-                                </v-chip>
-                                <v-chip color="secondary">
-                                    {{ `Timed In (${items.length})` }}
-                                </v-chip>
+                                <v-row no-gutters>
+                                    <v-icon @click="toggle">
+                                        {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
+                                    </v-icon>
+                                    <v-chip color="secondary">
+                                        {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
+                                    </v-chip>
+                                    <v-chip color="secondary">
+                                        {{ `Timed In (${items.length})` }}
+                                    </v-chip>
+
+                                    <v-spacer></v-spacer>
+
+                                    <v-btn rounded small @click="selectAttendance = items"><v-icon>mdi-check-box-multiple-outline</v-icon></v-btn>
+                                </v-row>
                             </th>
                         </template>
 
@@ -191,7 +197,7 @@
                                             <v-toolbar-title>Attendance</v-toolbar-title>
                                         </v-toolbar>
                                         <div v-if="printView">
-                                            <AttendanceView :attendance="attendance_packaged" :key="viewerwKey" :toPrint="toPrint" :supervisor="loggeduser" />
+                                            <AttendanceView :attendance="attendance_packaged" :key="viewerKey" :toPrint="toPrint" :supervisor="loggeduser" />
                                         </div>
 
                                     </v-card>
@@ -378,7 +384,7 @@
                     layout: _attendance
                 }
             },
-            viewerwKey () { //initially to enable rerender of component, now mainly triggers a function (but still need to return a date)
+            viewerKey () { //initially to enable rerender of component, now mainly triggers a function (but still need to return a date)
                 return Date.now(); //opened
             }
 			// tenant() {

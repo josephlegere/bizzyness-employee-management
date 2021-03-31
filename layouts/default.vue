@@ -138,4 +138,8 @@ export default {
     .handle:active {
         cursor:                     grabbing;
     }
+    .table-checkbox .v-input--checkbox .v-input__control { /* for custom checkboxes found in table */
+        flex-direction:         	inherit;
+        flex-wrap:              	nowrap;
+    }
 </style>
