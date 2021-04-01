@@ -15,6 +15,22 @@ export const actions = {
 
         let tenant_id_only = tenantid.split('/')[1]; //not a reference, without the "tenant/" prefix
 
+        let employees = [];
+        let employee_get = await this.$fire.firestore.collection('users')
+            .where('tenant_group.tenantid', '==', tenantid)
+            .where('tenant_group.checker', '==', true)
+            .get();
+
+        employee_get.forEach(doc => {
+            let { name, employee_code } = doc.data();
+            let _employee = { name };
+
+            if (employee_code) _employee.id = employee_code;
+            else _employee.id = doc.id;
+
+            employees.push(_employee);
+        });
+
         const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/${tenant_id_only}/${uid}?task=checker`);
         let { attendance } = response.data.data;
 
@@ -22,6 +38,8 @@ export const actions = {
             attendance: attendance.list,
             daysoff
         });
+        console.log(employees);
+        console.log(_list);
 
 		commit("setChecker", _list);
     },
@@ -37,6 +55,7 @@ export const actions = {
             attendance: attendance.list,
             daysoff
         });
+        console.log(_list);
 
 		commit("setMonitor", _list);
     },
