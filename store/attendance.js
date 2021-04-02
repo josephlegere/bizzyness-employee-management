@@ -9,6 +9,7 @@ export const state = () => ({
 export const actions = {
     async getChecker({ commit }, { tenant }) {
         let _list = [];
+        let _attendance_finalized = [];
         console.log(tenant);
 
         let { tenantid, uid, daysoff } = tenant;
@@ -38,10 +39,11 @@ export const actions = {
             attendance: attendance.list,
             daysoff
         });
-        console.log(employees);
-        console.log(_list);
+        _attendance_finalized = [ ..._list, ...get_anticipated_attendance(employees, _list) ];
+        // console.log(employees);
+        // console.log(_list);
 
-		commit("setChecker", _list);
+		commit("setChecker", _attendance_finalized);
     },
     async getMonitor({ commit }, { tenant }) {
         let _list = [];
@@ -326,10 +328,45 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
         _obj['status'] = (hrTotal >= workHours ? ( hrTotal > workHours ? 'OT' : 'REG') : 'INC');// specify attendance status: 'OVERTIME', 'REGULAR', 'UNDERTIME'
 
         _obj['date'] = (elem.timings[0].input).substr(0, 10);
+        _obj['priority'] = 1;// lower is priority
 
         local_index++;
         // console.log(_obj)
 
         return _obj;
     });
+}
+
+function get_anticipated_attendance (employees, attendance) {
+    let _anticipated = [];
+    let _dates = Object.keys(groupBy(attendance, 'date'));
+    _dates.forEach(date => {
+        let _date_anticipated = employees.filter(employee => !((attendance.filter(attend => attend.date === date)).map(({ employeeid }) => employeeid).includes(employee.id)));
+        _date_anticipated = _date_anticipated.map(attend => {
+            return {
+                index: null,
+                attendid: null,
+                date,
+                employee: attend.name,
+                employeeid: attend.id,
+                locations: '',
+                othours: '',
+                ottimings: '',
+                priority: 3, // at this point, this is the least
+                status: 'PEND',
+                timings: {}
+            };
+        });
+        _anticipated = [ ..._anticipated, ..._date_anticipated ];
+    });
+    console.log(_anticipated);
+    return _anticipated;
+}
+
+function groupBy(list, key) {
+    return list.reduce(function(collection, elem) {
+        console.log(elem);
+        (collection[elem[key]] = collection[elem[key]] || []).push(elem);
+        return collection;
+    }, {});
 }

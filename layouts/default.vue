@@ -142,4 +142,10 @@ export default {
         flex-direction:         	inherit;
         flex-wrap:              	nowrap;
     }
+
+	/* index.vue (Checker) */
+	.checker-row-style-minor {
+        background-color: 			rgba(222, 222, 222, 1);
+		color:						#808080;
+    }
 </style>

@@ -28,8 +28,12 @@
                         :search="search"
                         item-key="index"
                         group-by="date"
+                        :sort-by="['priority']"
                         :group-desc="true"
                         show-select
+                        multi-sort
+                        :item-class="itemRowBackground"
+                        :items-per-page="50"
                     >
                         <!-- fixed-header -->
                         <!-- height="600" -->
@@ -126,7 +130,7 @@
                                         {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
                                     </v-chip>
                                     <v-chip color="secondary">
-                                        {{ `Timed In (${items.length})` }}
+                                        {{ `Timed In (${items.filter(item => item.status !== 'PEND').length})` }}
                                     </v-chip>
 
                                     <v-spacer></v-spacer>
@@ -335,6 +339,7 @@
 			statusColorCoding (status) {
 				if (status == 'REG') return 'green'
 				else if (status == 'OT') return 'blue'
+				else if (status == 'PEND') return 'grey'
 				else return 'red'
             },
             extractLayout (list) {
@@ -366,6 +371,10 @@
                 console.log('reject');
                 await this.$store.dispatch('attendance/rejectChecker', { tenant: this.$store.state.auth.loggeduser, list: this.selectAttendance });
                 this.selectAttendance = [];
+            },
+            itemRowBackground: function (item) {
+                console.log(parseInt(item.priority) >= 3);
+                return parseInt(item.priority) >= 3 ? 'checker-row-style-minor' : '';
             }
 		},
 		computed: {
