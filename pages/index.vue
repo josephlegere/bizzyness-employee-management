@@ -115,6 +115,7 @@
                             <v-chip
                                 :color="statusColorCoding(item.status)"
                                 dark
+                                small
                             >
                                 {{ item.status }}
                             </v-chip>
@@ -135,7 +136,7 @@
 
                                     <v-spacer></v-spacer>
 
-                                    <v-btn rounded small @click="selectAttendance = items"><v-icon>mdi-check-box-multiple-outline</v-icon></v-btn>
+                                    <v-btn rounded small @click="selectAttendance = items.filter(item => item.isSelectable)"><v-icon>mdi-check-box-multiple-outline</v-icon></v-btn>
                                 </v-row>
                             </th>
                         </template>
@@ -373,7 +374,6 @@
                 this.selectAttendance = [];
             },
             itemRowBackground: function (item) {
-                console.log(parseInt(item.priority) >= 3);
                 return parseInt(item.priority) >= 3 ? 'checker-row-style-minor' : '';
             }
 		},

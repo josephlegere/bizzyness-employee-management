@@ -57,7 +57,7 @@ export const actions = {
             attendance: attendance.list,
             daysoff
         });
-        console.log(_list);
+        // console.log(_list);
 
 		commit("setMonitor", _list);
     },
@@ -328,7 +328,8 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
         _obj['status'] = (hrTotal >= workHours ? ( hrTotal > workHours ? 'OT' : 'REG') : 'INC');// specify attendance status: 'OVERTIME', 'REGULAR', 'UNDERTIME'
 
         _obj['date'] = (elem.timings[0].input).substr(0, 10);
-        _obj['priority'] = 1;// lower is priority
+        _obj['priority'] = 1;// lower is priority, sorting out whichever is on top in a certain group
+        _obj['isSelectable'] = true;
 
         local_index++;
         // console.log(_obj)
@@ -354,18 +355,17 @@ function get_anticipated_attendance (employees, attendance) {
                 ottimings: '',
                 priority: 3, // at this point, this is the least
                 status: 'PEND',
+                isSelectable: false,
                 timings: {}
             };
         });
         _anticipated = [ ..._anticipated, ..._date_anticipated ];
     });
-    console.log(_anticipated);
     return _anticipated;
 }
 
 function groupBy(list, key) {
     return list.reduce(function(collection, elem) {
-        console.log(elem);
         (collection[elem[key]] = collection[elem[key]] || []).push(elem);
         return collection;
     }, {});
