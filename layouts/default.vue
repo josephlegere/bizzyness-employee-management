@@ -114,7 +114,7 @@ export default {
 			miniVariant: false,
 			right: true,
 			rightDrawer: false,
-			title: 'Employee Management'
+			title: 'HR & Payroll'
 		}
 	},
 	methods: {
