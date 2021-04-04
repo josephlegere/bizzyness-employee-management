@@ -250,8 +250,13 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
         let overtime_timings = { in: '', out: '' };
         overtime_timings.list = [];
         
-        // determine if its a weekend
+        // determine if its a weekend or a special date
         if (daysoff.some(_day => _day.num === moment((elem.timings[0].input).substr(0, 10)).day())) hrTotal += 8;
+        else if (elem.hasOwnProperty('special_date')) {
+            let { type, hours } = elem.special_date;
+            if (type === 'holiday') hrTotal += 8;
+            else if (type === 'specialtiming') hrTotal += 6;
+        }
         
         // DON'T INCLUDE ANY CONDITION IF TIMING LIST HAS LENGTH GREATER THAN 0
         // loop through each sets then accumulate the work hours to a "variable" to determine attendance status

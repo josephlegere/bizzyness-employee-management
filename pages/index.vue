@@ -161,10 +161,10 @@
                         class="ml-md-auto"
                     >
                         <v-sheet
-                            dark
+                            color="transparent"
                             class="form-toolbar">
                             <v-toolbar
-                                flat
+                                dark
                                 height="60">
                                 
                                 <v-btn
@@ -435,11 +435,13 @@
     }
     .form-toolbar {
         width:                  100%;
-        border-radius:          15px 15px 0 0;
-        /* Don't know why border-radius should be repeated for it to work */
-        /* Maybe toolbar has a default border-radius of 0, need to override to work */
+        /* (WRONG) Don't know why border-radius should be repeated for it to work */
+        /* (WRONG) Maybe toolbar has a default border-radius of 0, need to override to work */
     }
     .form-toolbar .v-toolbar {
+        /* v-sheet default color is white, need to turn it transparent to remove for the border-radius apply its design */
+        /* v-sheet need to contain the toolbar in order for the border radius to take effect */
+        box-shadow:             0px -2px 4px -1px rgb(0 0 0 / 20%), 0px -2px 5px 0px rgb(0 0 0 / 14%);
         border-radius:          15px 15px 0 0;
     }
 </style>
