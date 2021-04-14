@@ -251,11 +251,11 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
         overtime_timings.list = [];
         
         // determine if its a weekend or a special date
-        if (daysoff.some(_day => _day.num === moment((elem.timings[0].input).substr(0, 10)).day())) hrTotal += 8;
+        if (daysoff.some(_day => _day.num === moment((elem.timings[0].input).substr(0, 10)).day())) hrTotal += workHours;
         else if (elem.hasOwnProperty('special_date')) {
             let { type, hours } = elem.special_date;
-            if (type === 'holiday') hrTotal += 8;
-            else if (type === 'specialtiming') hrTotal += 6;
+            if (type === 'holiday') hrTotal += workHours;
+            else if (type === 'specialtiming') workHours = 6;
         }
         
         // DON'T INCLUDE ANY CONDITION IF TIMING LIST HAS LENGTH GREATER THAN 0
@@ -345,7 +345,7 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
 
 function get_anticipated_attendance (employees, attendance) {
     let _anticipated = [];
-    let _dates = Object.keys(groupBy(attendance, 'date'));
+    let _dates = groupKeys(attendance, 'date');
     _dates.forEach(date => {
         let _date_anticipated = employees.filter(employee => !((attendance.filter(attend => attend.date === date)).map(({ employeeid }) => employeeid).includes(employee.id)));
         _date_anticipated = _date_anticipated.map(attend => {
@@ -374,4 +374,11 @@ function groupBy(list, key) {
         (collection[elem[key]] = collection[elem[key]] || []).push(elem);
         return collection;
     }, {});
+}
+
+function groupKeys(list, key) {
+    return list.reduce(function(collection, elem) {
+        collection.includes(elem[key]) || collection.push(elem[key]);
+        return collection;
+    }, []);
 }
