@@ -40,8 +40,10 @@ export const actions = {
 
 			if (employee_code) _user.employee_code = employee_code;
 
-			if (system_config.server_type.type === 'hybrid_lamp_fire')
+			if (system_config.server_type.type === 'hybrid_lamp_fire') {
 				this.$axios.setHeader('external-api', system_config.server_host.api);
+				this.$axios.setHeader('server-timezone', system_config.timezone);
+			}
 
         	this.$axios.setHeader('server-type', system_config.server_type.type);
 
