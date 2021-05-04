@@ -1,202 +1,218 @@
 <template>
-    <v-row no-gutters="">
-        <v-col>
-            <v-card>
-                <v-card-title>
-                    <v-row no-gutters>
-                        <v-col cols="12"  md="6" class="pa-2">
-                            <v-text-field
-                                v-model="search"
-                                append-icon="mdi-magnify"
-                                label="Search"
-                                single-line
-                                hide-details
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="6" class="pa-2">
-                            <!-- <date-range :suggests="suggests" @update-range="updateDateFilter" /> -->
-                        </v-col>
-                    </v-row>
-                </v-card-title>
-                <v-data-table
-					class="mb-15"
-					v-model="selectAttendance"
-                    :headers="headers"
-                    :items="attendance"
-                    :search="search"
-                    item-key="index"
-					group-by="date"
-                    :group-desc="true"
-                    show-select
-                >
-                    <!-- fixed-header -->
-                    <!-- height="600" -->
+    <div>
+        <div v-if="loading">
+            <v-skeleton-loader
+                type="article"
+            ></v-skeleton-loader>
 
-                    <!-- <template v-slot:item="props">
-                        <tr :active="props.selected">
-                            <td>
-                                <v-checkbox
-                                    v-model="selectAttendance"
-                                ></v-checkbox>
-                            </td> -->
-                                    <!-- :label="`Checkbox 1: ${checkbox1.toString()}`" -->
-                            <!-- <td>{{ props.item.employee }}</td>
-                            <td>
-                                <template v-for="timing in props.item.timings.day_min">
-                                    <v-card>
-                                        {{timing}}
-                                    </v-card>
-                                </template>
-                            </td>
-                            <td>
-                                <template v-for="timing in props.item.timings.noon_min">
-                                    <v-card>
-                                        {{timing}}
-                                    </v-card>
-                                </template>
-                            </td>
-                            <td>{{ props.item.otstart }}</td>
-                            <td>{{ props.item.otend }}</td>
-                            <td>{{ props.item.othours }}</td>
-                            <td>{{ props.item.location }}</td>
-                            <td>
-                                <v-chip
-                                    :color="statusColorCoding(props.item.status)"
-                                    dark
-                                >
-                                    {{ props.item.status }}
-                                </v-chip>
-                            </td>
-                        </tr> 
-                    </template> -->
+            <v-divider class="my-7"></v-divider>
 
-					<template v-slot:item.dayin="{ item }">
-						<template v-for="timing in item.timings.day_min">
-                            <v-card>
-                                <v-card-text class=text-center>
-                                    {{timing}}
-                                </v-card-text>
-                            </v-card>
-                        </template>
-					</template>
-
-					<template v-slot:item.nightin="{ item }">
-						<template v-for="timing in item.timings.noon_min">
-                            <v-card class="my-2">
-                                <v-card-text class=text-center>
-                                    {{timing}}
-                                </v-card-text>
-                            </v-card>
-                        </template>
-					</template>
-
-                    <template v-slot:item.ottimings="{ item }">
-                        <!-- <v-card v-if="item.ottimings !== ''" class="my-2">
-                            <v-card-text class=text-center>
-                                {{item.ottimings}}
-                            </v-card-text>
-                        </v-card> -->
-                        <template v-for="timing in item.ottimings">
-                            <v-card class="my-2">
-                                <v-card-text class=text-center>
-                                    {{timing}}
-                                </v-card-text>
-                            </v-card>
-                        </template>
-					</template>
-
-					<template v-slot:item.status="{ item }">
-						<v-chip
-							:color="statusColorCoding(item.status)"
-							dark
-                            small
-						>
-							{{ item.status }}
-						</v-chip>
-					</template>
-
-					<template v-slot:group.header="{items, isOpen, toggle}">
-						<th colspan="8">
+            <v-skeleton-loader
+                elevation="1"
+                type="table"
+            ></v-skeleton-loader>
+        </div>
+        <div v-else>
+            <v-row no-gutters="">
+                <v-col>
+                    <v-card>
+                        <v-card-title>
                             <v-row no-gutters>
-                                <!-- <div class="table-checkbox ml-md-3">
-                                    <v-checkbox @click="selectGroup(items)"></v-checkbox>
-                                </div> -->
-
-                                <v-icon @click="toggle">
-                                    {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
-                                </v-icon>
-                                <v-chip color="secondary">
-                                    {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
-                                </v-chip>
-                                <v-chip color="secondary">
-                                    {{ `Timed In (${items.length})` }}
-                                </v-chip>
-
-                                <v-spacer></v-spacer>
-
-                                <v-btn rounded small @click="selectAttendance = items.filter(item => item.isSelectable)"><v-icon>mdi-check-box-multiple-outline</v-icon></v-btn>
-                                <v-btn rounded small @click="printGroup(items.filter(item => item.isSelectable))">Print</v-btn>
+                                <v-col cols="12"  md="6" class="pa-2">
+                                    <v-text-field
+                                        v-model="search"
+                                        append-icon="mdi-magnify"
+                                        label="Search"
+                                        single-line
+                                        hide-details
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="6" class="pa-2">
+                                    <!-- <date-range :suggests="suggests" @update-range="updateDateFilter" /> -->
+                                </v-col>
                             </v-row>
-                        </th>
-					</template>
+                        </v-card-title>
+                        <v-data-table
+                            class="mb-15"
+                            v-model="selectAttendance"
+                            :headers="headers"
+                            :items="attendance"
+                            :search="search"
+                            item-key="index"
+                            group-by="date"
+                            :group-desc="true"
+                            show-select
+                        >
+                            <!-- fixed-header -->
+                            <!-- height="600" -->
 
-                    <!-- <template slot="body.append">
-                        <tr>
-                            <th class="d-flex justify-space-between align-center">TOTAL <span class="d-sm-none">{{total}}</span></th>
-                            <th colspan="2" class="pa-0"></th>
-                            <th class="d-none d-sm-block align-center">{{total.toFixed(2)}}</th> 
-                            <th colspan="2" class="pa-0"></th>
-                        </tr>
-                    </template> -->
-                </v-data-table>
-                
-				<v-row
-                    class="toolbar-container"
-                    no-gutters
-                >
-                    <v-col
-                        md="2"
-                        class="ml-md-auto"
-                    >
-                        <v-sheet
-                            color="transparent"
-                            class="form-toolbar">
-                            <v-toolbar
-                                dark
-                                height="60"
-                                class="d-flex justify-center">
+                            <!-- <template v-slot:item="props">
+                                <tr :active="props.selected">
+                                    <td>
+                                        <v-checkbox
+                                            v-model="selectAttendance"
+                                        ></v-checkbox>
+                                    </td> -->
+                                            <!-- :label="`Checkbox 1: ${checkbox1.toString()}`" -->
+                                    <!-- <td>{{ props.item.employee }}</td>
+                                    <td>
+                                        <template v-for="timing in props.item.timings.day_min">
+                                            <v-card>
+                                                {{timing}}
+                                            </v-card>
+                                        </template>
+                                    </td>
+                                    <td>
+                                        <template v-for="timing in props.item.timings.noon_min">
+                                            <v-card>
+                                                {{timing}}
+                                            </v-card>
+                                        </template>
+                                    </td>
+                                    <td>{{ props.item.otstart }}</td>
+                                    <td>{{ props.item.otend }}</td>
+                                    <td>{{ props.item.othours }}</td>
+                                    <td>{{ props.item.location }}</td>
+                                    <td>
+                                        <v-chip
+                                            :color="statusColorCoding(props.item.status)"
+                                            dark
+                                        >
+                                            {{ props.item.status }}
+                                        </v-chip>
+                                    </td>
+                                </tr> 
+                            </template> -->
 
-                                <v-btn
-                                    outlined
-                                    @click="printAttendance"
-                                >
-                                    Print
-                                    <v-icon>mdi-printer-search</v-icon>
-                                </v-btn>
-                                
-                                <!-- Print -->
-                                <v-dialog v-model="printView" fullscreen hide-overlay transition="dialog-bottom-transition">
-                                    <v-card dark>
-                                        <v-toolbar dark color="primary">
-                                            <v-btn icon dark @click="printView = false; toPrint = false">
-                                                <v-icon>mdi-close</v-icon>
-                                            </v-btn>
-                                            <v-toolbar-title>Attendance</v-toolbar-title>
-                                        </v-toolbar>
-                                        <div v-if="printView">
-                                            <AttendanceView :attendance="attendance_packaged" :key="viewerKey" :toPrint="toPrint" :supervisor="loggeduser" />
-                                        </div>
-
+                            <template v-slot:item.dayin="{ item }">
+                                <template v-for="timing in item.timings.day_min">
+                                    <v-card>
+                                        <v-card-text class=text-center>
+                                            {{timing}}
+                                        </v-card-text>
                                     </v-card>
-                                </v-dialog>
+                                </template>
+                            </template>
 
-                            </v-toolbar>
-                        </v-sheet>
-                    </v-col>
-                </v-row>
-            </v-card>
-        </v-col>
-    </v-row>
+                            <template v-slot:item.nightin="{ item }">
+                                <template v-for="timing in item.timings.noon_min">
+                                    <v-card class="my-2">
+                                        <v-card-text class=text-center>
+                                            {{timing}}
+                                        </v-card-text>
+                                    </v-card>
+                                </template>
+                            </template>
+
+                            <template v-slot:item.ottimings="{ item }">
+                                <!-- <v-card v-if="item.ottimings !== ''" class="my-2">
+                                    <v-card-text class=text-center>
+                                        {{item.ottimings}}
+                                    </v-card-text>
+                                </v-card> -->
+                                <template v-for="timing in item.ottimings">
+                                    <v-card class="my-2">
+                                        <v-card-text class=text-center>
+                                            {{timing}}
+                                        </v-card-text>
+                                    </v-card>
+                                </template>
+                            </template>
+
+                            <template v-slot:item.status="{ item }">
+                                <v-chip
+                                    :color="statusColorCoding(item.status)"
+                                    dark
+                                    small
+                                >
+                                    {{ item.status }}
+                                </v-chip>
+                            </template>
+
+                            <template v-slot:group.header="{items, isOpen, toggle}">
+                                <th colspan="8">
+                                    <v-row no-gutters>
+                                        <!-- <div class="table-checkbox ml-md-3">
+                                            <v-checkbox @click="selectGroup(items)"></v-checkbox>
+                                        </div> -->
+
+                                        <v-icon @click="toggle">
+                                            {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
+                                        </v-icon>
+                                        <v-chip color="secondary">
+                                            {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
+                                        </v-chip>
+                                        <v-chip color="secondary">
+                                            {{ `Timed In (${items.length})` }}
+                                        </v-chip>
+
+                                        <v-spacer></v-spacer>
+
+                                        <v-btn rounded small @click="selectAttendance = items.filter(item => item.isSelectable)"><v-icon>mdi-check-box-multiple-outline</v-icon></v-btn>
+                                        <v-btn rounded small @click="printGroup(items.filter(item => item.isSelectable))">Print</v-btn>
+                                    </v-row>
+                                </th>
+                            </template>
+
+                            <!-- <template slot="body.append">
+                                <tr>
+                                    <th class="d-flex justify-space-between align-center">TOTAL <span class="d-sm-none">{{total}}</span></th>
+                                    <th colspan="2" class="pa-0"></th>
+                                    <th class="d-none d-sm-block align-center">{{total.toFixed(2)}}</th> 
+                                    <th colspan="2" class="pa-0"></th>
+                                </tr>
+                            </template> -->
+                        </v-data-table>
+                        
+                        <v-row
+                            class="toolbar-container"
+                            no-gutters
+                        >
+                            <v-col
+                                md="2"
+                                class="ml-md-auto"
+                            >
+                                <v-sheet
+                                    color="transparent"
+                                    class="form-toolbar">
+                                    <v-toolbar
+                                        dark
+                                        height="60"
+                                        class="d-flex justify-center">
+
+                                        <v-btn
+                                            outlined
+                                            @click="printAttendance"
+                                        >
+                                            Print
+                                            <v-icon>mdi-printer-search</v-icon>
+                                        </v-btn>
+                                        
+                                        <!-- Print -->
+                                        <v-dialog v-model="printView" fullscreen hide-overlay transition="dialog-bottom-transition">
+                                            <v-card dark>
+                                                <v-toolbar dark color="primary">
+                                                    <v-btn icon dark @click="printView = false; toPrint = false">
+                                                        <v-icon>mdi-close</v-icon>
+                                                    </v-btn>
+                                                    <v-toolbar-title>Attendance</v-toolbar-title>
+                                                </v-toolbar>
+                                                <div v-if="printView">
+                                                    <AttendanceView :attendance="attendance_packaged" :key="viewerKey" :toPrint="toPrint" :supervisor="loggeduser" />
+                                                </div>
+
+                                            </v-card>
+                                        </v-dialog>
+
+                                    </v-toolbar>
+                                </v-sheet>
+                            </v-col>
+                        </v-row>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -210,6 +226,8 @@
 		name: 'Monitor-Performance',
 		data () {
 			return {
+                loading: false,
+                errors: '',
 				datefilter: [],
 				suggests: [],
 				search: '',
@@ -306,9 +324,16 @@
 			// 	loggeduser: state => state.auth.loggeduser
 			// })
         },
-        async created() {
+        created() {
+            this.loading = true;
             this.supervisor = this.$store.state.auth.loggeduser;
-            await this.$store.dispatch('attendance/getMonitor', {tenant: this.$store.state.auth.loggeduser});
+            this.$store.dispatch('attendance/getMonitor', {tenant: this.$store.state.auth.loggeduser})
+                .catch(err => {
+                    this.errors = err;
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
         },
         async asyncData({store}) {
             // await store.dispatch('attendance/getMonitor', {date: 'date', tenant: 'tenant'});

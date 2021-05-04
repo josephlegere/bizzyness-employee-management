@@ -1,288 +1,304 @@
 <template>
-    <v-row no-gutters="">
-        <v-col>
-            <v-card>
-                <v-card-title>
-                    <v-row no-gutters>
-                        <v-col cols="12" md="6" class="pa-2">
-                            <v-text-field
-                                v-model="search"
-                                append-icon="mdi-magnify"
-                                label="Search"
-                                single-line
-                                hide-details
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="6" class="pa-2">
-                            <!-- <date-range :suggests="suggests" @update-range="updateDateFilter" /> -->
-                        </v-col>
-                    </v-row>
-                </v-card-title>
+    <div>
+        <div v-if="loading">
+            <v-skeleton-loader
+                type="article"
+            ></v-skeleton-loader>
 
-                <client-only>
-                    <v-data-table
-                        class="mb-15"
-                        v-model="selectAttendance"
-                        :headers="headers"
-                        :items="attendance"
-                        :search="search"
-                        item-key="index"
-                        group-by="date"
-                        :sort-by="['priority']"
-                        :group-desc="true"
-                        show-select
-                        multi-sort
-                        :item-class="itemRowBackground"
-                        :items-per-page="50"
-                    >
-                        <!-- fixed-header -->
-                        <!-- height="600" -->
+            <v-divider class="my-7"></v-divider>
 
-                        <!-- <template v-slot:item="props">
-                            <tr :active="props.selected">
-                                <td>
-                                    <v-checkbox
-                                        v-model="selectAttendance"
-                                    ></v-checkbox>
-                                </td> -->
-                                        <!-- :label="`Checkbox 1: ${checkbox1.toString()}`" -->
-                                <!-- <td>{{ props.item.employee }}</td>
-                                <td>
-                                    <template v-for="timing in props.item.timings.day_min">
-                                        <v-card>
-                                            {{timing}}
-                                        </v-card>
-                                    </template>
-                                </td>
-                                <td>
-                                    <template v-for="timing in props.item.timings.noon_min">
-                                        <v-card>
-                                            {{timing}}
-                                        </v-card>
-                                    </template>
-                                </td>
-                                <td>{{ props.item.otstart }}</td>
-                                <td>{{ props.item.otend }}</td>
-                                <td>{{ props.item.othours }}</td>
-                                <td>{{ props.item.location }}</td>
-                                <td>
-                                    <v-chip
-                                        :color="statusColorCoding(props.item.status)"
-                                        dark
-                                    >
-                                        {{ props.item.status }}
-                                    </v-chip>
-                                </td>
-                            </tr> 
-                        </template> -->
+            <v-skeleton-loader
+                elevation="1"
+                type="table"
+            ></v-skeleton-loader>
+        </div>
+        <div v-else>
+            <v-row no-gutters="">
+                <v-col>
+                    <v-card>
+                        <v-card-title>
+                            <v-row no-gutters>
+                                <v-col cols="12" md="6" class="pa-2">
+                                    <v-text-field
+                                        v-model="search"
+                                        append-icon="mdi-magnify"
+                                        label="Search"
+                                        single-line
+                                        hide-details
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="6" class="pa-2">
+                                    <!-- <date-range :suggests="suggests" @update-range="updateDateFilter" /> -->
+                                </v-col>
+                            </v-row>
+                        </v-card-title>
 
-                        <template v-slot:item.day="{ item }">
-                            <template v-for="timing in item.timings.day_min">
-                                <v-card>
-                                    <v-card-text class=text-center>
-                                        {{timing}}
-                                    </v-card-text>
-                                </v-card>
-                            </template>
-                        </template>
-
-                        <template v-slot:item.night="{ item }">
-                            <template v-for="timing in item.timings.noon_min">
-                                <v-card class="my-2">
-                                    <v-card-text class=text-center>
-                                        {{timing}}
-                                    </v-card-text>
-                                </v-card>
-                            </template>
-                        </template>
-
-                        <template v-slot:item.ottimings="{ item }">
-                            <!-- <v-card v-if="item.ottimings !== ''" class="my-2">
-                                <v-card-text class=text-center>
-                                    {{item.ottimings}}
-                                </v-card-text>
-                            </v-card> -->
-                            <template v-for="timing in item.ottimings">
-                                <v-card class="my-2">
-                                    <v-card-text class=text-center>
-                                        {{timing}}
-                                    </v-card-text>
-                                </v-card>
-                            </template>
-                        </template>
-
-                        <template v-slot:item.status="{ item }">
-                            <v-chip
-                                :color="statusColorCoding(item.status)"
-                                dark
-                                small
+                        <client-only>
+                            <v-data-table
+                                class="mb-15"
+                                v-model="selectAttendance"
+                                :headers="headers"
+                                :items="attendance"
+                                :search="search"
+                                item-key="index"
+                                group-by="date"
+                                :sort-by="['priority']"
+                                :group-desc="true"
+                                show-select
+                                multi-sort
+                                :item-class="itemRowBackground"
+                                :items-per-page="50"
                             >
-                                {{ item.status }}
-                            </v-chip>
-                        </template>
+                                <!-- fixed-header -->
+                                <!-- height="600" -->
 
-                        <template v-slot:group.header="{items, isOpen, toggle}">
-                            <th colspan="8">
-                                <v-row no-gutters>
-                                    <v-icon @click="toggle">
-                                        {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
-                                    </v-icon>
-                                    <v-chip color="secondary">
-                                        {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
-                                    </v-chip>
-                                    <v-chip color="secondary">
-                                        {{ `Timed In (${items.filter(item => item.status !== 'PEND').length})` }}
-                                    </v-chip>
+                                <!-- <template v-slot:item="props">
+                                    <tr :active="props.selected">
+                                        <td>
+                                            <v-checkbox
+                                                v-model="selectAttendance"
+                                            ></v-checkbox>
+                                        </td> -->
+                                                <!-- :label="`Checkbox 1: ${checkbox1.toString()}`" -->
+                                        <!-- <td>{{ props.item.employee }}</td>
+                                        <td>
+                                            <template v-for="timing in props.item.timings.day_min">
+                                                <v-card>
+                                                    {{timing}}
+                                                </v-card>
+                                            </template>
+                                        </td>
+                                        <td>
+                                            <template v-for="timing in props.item.timings.noon_min">
+                                                <v-card>
+                                                    {{timing}}
+                                                </v-card>
+                                            </template>
+                                        </td>
+                                        <td>{{ props.item.otstart }}</td>
+                                        <td>{{ props.item.otend }}</td>
+                                        <td>{{ props.item.othours }}</td>
+                                        <td>{{ props.item.location }}</td>
+                                        <td>
+                                            <v-chip
+                                                :color="statusColorCoding(props.item.status)"
+                                                dark
+                                            >
+                                                {{ props.item.status }}
+                                            </v-chip>
+                                        </td>
+                                    </tr> 
+                                </template> -->
 
-                                    <v-spacer></v-spacer>
+                                <template v-slot:item.day="{ item }">
+                                    <template v-for="timing in item.timings.day_min">
+                                        <v-card>
+                                            <v-card-text class=text-center>
+                                                {{timing}}
+                                            </v-card-text>
+                                        </v-card>
+                                    </template>
+                                </template>
 
-                                    <v-btn rounded small @click="selectAttendance = items.filter(item => item.isSelectable)"><v-icon>mdi-check-box-multiple-outline</v-icon></v-btn>
-                                </v-row>
-                            </th>
-                        </template>
+                                <template v-slot:item.night="{ item }">
+                                    <template v-for="timing in item.timings.noon_min">
+                                        <v-card class="my-2">
+                                            <v-card-text class=text-center>
+                                                {{timing}}
+                                            </v-card-text>
+                                        </v-card>
+                                    </template>
+                                </template>
 
-                        <!-- <template slot="body.append">
-                            <tr>
-                                <th class="d-flex justify-space-between align-center">TOTAL <span class="d-sm-none">{{total}}</span></th>
-                                <th colspan="2" class="pa-0"></th>
-                                <th class="d-none d-sm-block align-center">{{total.toFixed(2)}}</th> 
-                                <th colspan="2" class="pa-0"></th>
-                            </tr>
-                        </template> -->
-                    </v-data-table>
-                </client-only>
-                
-                <v-row
-                    class="toolbar-container"
-                    no-gutters
-                >
-                    <v-col
-                        md="5"
-                        class="ml-md-auto"
-                    >
-                        <v-sheet
-                            color="transparent"
-                            class="form-toolbar">
-                            <v-toolbar
-                                dark
-                                height="60">
-                                
-                                <v-btn
-                                    outlined
-                                    @click="confirmReject = true"
-                                >
-                                    Reject
-                                    <v-icon right>mdi-close-circle-outline</v-icon>
-                                </v-btn>
-
-                                <v-spacer></v-spacer>
-
-                                <v-btn
-                                    outlined
-                                    @click="printView = true"
-                                >
-                                    <v-icon>mdi-printer-search</v-icon>
-                                </v-btn>
-                                
-                                <v-btn
-                                    outlined
-                                    @click="confirmPrint = true"
-                                >
-                                    Confirm
-                                    <v-icon right>mdi-send-circle-outline</v-icon>
-                                </v-btn>
-                                
-                                <!-- Print View -->
-                                <v-dialog v-model="printView" fullscreen hide-overlay transition="dialog-bottom-transition">
-                                    <v-card dark>
-                                        <v-toolbar dark color="primary">
-                                            <v-btn icon dark @click="printView = false; toPrint = false">
-                                                <v-icon>mdi-close</v-icon>
-                                            </v-btn>
-                                            <v-toolbar-title>Attendance</v-toolbar-title>
-                                        </v-toolbar>
-                                        <div v-if="printView">
-                                            <AttendanceView :attendance="attendance_packaged" :key="viewerKey" :toPrint="toPrint" :supervisor="loggeduser" />
-                                        </div>
-
-                                    </v-card>
-                                </v-dialog>
-
-                                <!-- Submit Confirm -->
-                                <v-dialog
-                                    v-model="confirmPrint"
-                                    max-width="290"
-                                >
-                                    <v-card>
-                                        <v-card-title class="headline">Confirm Attendance</v-card-title>
-
-                                        <v-card-text>
-                                            Are you sure you want to confirm? Check all the details of the attendance before submission.
+                                <template v-slot:item.ottimings="{ item }">
+                                    <!-- <v-card v-if="item.ottimings !== ''" class="my-2">
+                                        <v-card-text class=text-center>
+                                            {{item.ottimings}}
                                         </v-card-text>
+                                    </v-card> -->
+                                    <template v-for="timing in item.ottimings">
+                                        <v-card class="my-2">
+                                            <v-card-text class=text-center>
+                                                {{timing}}
+                                            </v-card-text>
+                                        </v-card>
+                                    </template>
+                                </template>
 
-                                        <v-card-actions>
+                                <template v-slot:item.status="{ item }">
+                                    <v-chip
+                                        :color="statusColorCoding(item.status)"
+                                        dark
+                                        small
+                                    >
+                                        {{ item.status }}
+                                    </v-chip>
+                                </template>
+
+                                <template v-slot:group.header="{items, isOpen, toggle}">
+                                    <th colspan="8">
+                                        <v-row no-gutters>
+                                            <v-icon @click="toggle">
+                                                {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
+                                            </v-icon>
+                                            <v-chip color="secondary">
+                                                {{ items[0].date | moment("MMMM Do YYYY, dddd") }}
+                                            </v-chip>
+                                            <v-chip color="secondary">
+                                                {{ `Timed In (${items.filter(item => item.status !== 'PEND').length})` }}
+                                            </v-chip>
+
                                             <v-spacer></v-spacer>
 
-                                            <v-btn
-                                                color="red darken-1"
-                                                text
-                                                @click="confirmPrint = false"
-                                            >
-                                                Cancel
-                                            </v-btn>
+                                            <v-btn rounded small @click="selectAttendance = items.filter(item => item.isSelectable)"><v-icon>mdi-check-box-multiple-outline</v-icon></v-btn>
+                                        </v-row>
+                                    </th>
+                                </template>
 
-                                            <v-btn
-                                                color="primary"
-                                                text
-                                                @click="confirmAttendance"
-                                            >
-                                                Confirm
-                                            </v-btn>
-                                        </v-card-actions>
-                                    </v-card>
-                                </v-dialog>
+                                <!-- <template slot="body.append">
+                                    <tr>
+                                        <th class="d-flex justify-space-between align-center">TOTAL <span class="d-sm-none">{{total}}</span></th>
+                                        <th colspan="2" class="pa-0"></th>
+                                        <th class="d-none d-sm-block align-center">{{total.toFixed(2)}}</th> 
+                                        <th colspan="2" class="pa-0"></th>
+                                    </tr>
+                                </template> -->
+                            </v-data-table>
+                        </client-only>
+                        
+                        <v-row
+                            class="toolbar-container"
+                            no-gutters
+                        >
+                            <v-col
+                                md="5"
+                                class="ml-md-auto"
+                            >
+                                <v-sheet
+                                    color="transparent"
+                                    class="form-toolbar">
+                                    <v-toolbar
+                                        dark
+                                        height="60">
+                                        
+                                        <v-btn
+                                            outlined
+                                            @click="confirmReject = true"
+                                        >
+                                            Reject
+                                            <v-icon right>mdi-close-circle-outline</v-icon>
+                                        </v-btn>
 
-                                <!-- Reject -->
-                                <v-dialog
-                                    v-model="confirmReject"
-                                    max-width="290"
-                                >
-                                    <v-card>
-                                        <v-card-title class="headline">Reject Attendance</v-card-title>
+                                        <v-spacer></v-spacer>
 
-                                        <v-card-text>
-                                            Are you sure you want to reject? Check all the details of the attendance before rejecting.
-                                        </v-card-text>
+                                        <v-btn
+                                            outlined
+                                            @click="printView = true"
+                                        >
+                                            <v-icon>mdi-printer-search</v-icon>
+                                        </v-btn>
+                                        
+                                        <v-btn
+                                            outlined
+                                            @click="confirmPrint = true"
+                                        >
+                                            Confirm
+                                            <v-icon right>mdi-send-circle-outline</v-icon>
+                                        </v-btn>
+                                        
+                                        <!-- Print View -->
+                                        <v-dialog v-model="printView" fullscreen hide-overlay transition="dialog-bottom-transition">
+                                            <v-card dark>
+                                                <v-toolbar dark color="primary">
+                                                    <v-btn icon dark @click="printView = false; toPrint = false">
+                                                        <v-icon>mdi-close</v-icon>
+                                                    </v-btn>
+                                                    <v-toolbar-title>Attendance</v-toolbar-title>
+                                                </v-toolbar>
+                                                <div v-if="printView">
+                                                    <AttendanceView :attendance="attendance_packaged" :key="viewerKey" :toPrint="toPrint" :supervisor="loggeduser" />
+                                                </div>
 
-                                        <v-card-actions>
-                                            <v-spacer></v-spacer>
+                                            </v-card>
+                                        </v-dialog>
 
-                                            <v-btn
-                                                color="red darken-1"
-                                                text
-                                                @click="confirmReject = false"
-                                            >
-                                                Cancel
-                                            </v-btn>
+                                        <!-- Submit Confirm -->
+                                        <v-dialog
+                                            v-model="confirmPrint"
+                                            max-width="290"
+                                        >
+                                            <v-card>
+                                                <v-card-title class="headline">Confirm Attendance</v-card-title>
 
-                                            <v-btn
-                                                color="primary"
-                                                text
-                                                @click="rejectAttendance"
-                                            >
-                                                Reject
-                                            </v-btn>
-                                        </v-card-actions>
-                                    </v-card>
-                                </v-dialog>
+                                                <v-card-text>
+                                                    Are you sure you want to confirm? Check all the details of the attendance before submission.
+                                                </v-card-text>
 
-                            </v-toolbar>
-                        </v-sheet>
-                    </v-col>
-                </v-row>
-            </v-card>
-        </v-col>
-    </v-row>
+                                                <v-card-actions>
+                                                    <v-spacer></v-spacer>
+
+                                                    <v-btn
+                                                        color="red darken-1"
+                                                        text
+                                                        @click="confirmPrint = false"
+                                                    >
+                                                        Cancel
+                                                    </v-btn>
+
+                                                    <v-btn
+                                                        color="primary"
+                                                        text
+                                                        @click="confirmAttendance"
+                                                    >
+                                                        Confirm
+                                                    </v-btn>
+                                                </v-card-actions>
+                                            </v-card>
+                                        </v-dialog>
+
+                                        <!-- Reject -->
+                                        <v-dialog
+                                            v-model="confirmReject"
+                                            max-width="290"
+                                        >
+                                            <v-card>
+                                                <v-card-title class="headline">Reject Attendance</v-card-title>
+
+                                                <v-card-text>
+                                                    Are you sure you want to reject? Check all the details of the attendance before rejecting.
+                                                </v-card-text>
+
+                                                <v-card-actions>
+                                                    <v-spacer></v-spacer>
+
+                                                    <v-btn
+                                                        color="red darken-1"
+                                                        text
+                                                        @click="confirmReject = false"
+                                                    >
+                                                        Cancel
+                                                    </v-btn>
+
+                                                    <v-btn
+                                                        color="primary"
+                                                        text
+                                                        @click="rejectAttendance"
+                                                    >
+                                                        Reject
+                                                    </v-btn>
+                                                </v-card-actions>
+                                            </v-card>
+                                        </v-dialog>
+
+                                    </v-toolbar>
+                                </v-sheet>
+                            </v-col>
+                        </v-row>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -296,6 +312,8 @@
 		name: 'Attendance-Checker',
 		data () {
 			return {
+                loading: false,
+                errors: '',
 				datefilter: [],
 				suggests: [],
 				search: '',
@@ -404,9 +422,16 @@
 			// 	loggeduser: state => state.auth.loggeduser
 			// })
         },
-        async created () {
+        created () {
+            this.loading = true;
             this.supervisor = this.$store.state.auth.loggeduser;
-            await this.$store.dispatch('attendance/getChecker', { tenant: this.$store.state.auth.loggeduser });
+            this.$store.dispatch('attendance/getChecker', { tenant: this.$store.state.auth.loggeduser })
+                .catch(err => {
+                    this.errors = err;
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
             // console.log(this.attendance);
         },
         async asyncData({store}) {
