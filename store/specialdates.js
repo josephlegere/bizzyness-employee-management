@@ -3,7 +3,9 @@ import moment from 'moment';
 export const actions = {
     insert({}, tenant) {
         let dates = [
-            
+            // { created: this.$fireModule.firestore.FieldValue.serverTimestamp(), date: this.$fireModule.firestore.Timestamp.fromDate(moment('2021-05-13').toDate()), name: 'Eid al-Fitr', rate: 1.5, set_by: {}, type: 'holiday' },
+            // { created: this.$fireModule.firestore.FieldValue.serverTimestamp(), date: this.$fireModule.firestore.Timestamp.fromDate(moment('2021-05-14').toDate()), name: 'Eid al-Fitr', rate: 1.5, set_by: {}, type: 'holiday' },
+            // { created: this.$fireModule.firestore.FieldValue.serverTimestamp(), date: this.$fireModule.firestore.Timestamp.fromDate(moment('2021-05-15').toDate()), name: 'Eid al-Fitr', rate: 1.5, set_by: {}, type: 'holiday' }
         ];
 
         // let db = this.$fire.firestore;
