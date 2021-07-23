@@ -1,3 +1,1 @@
-dispatch:
-  - url: "hr.bizzyness.io/*"
-    service: hr
+dispatch: []
