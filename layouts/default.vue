@@ -109,6 +109,11 @@ export default {
 					icon: 'mdi-form-select',
 					title: 'Monitor Performance',
 					to: '/monitor'
+				},
+				{
+					icon: 'mdi-calendar',
+					title: 'Special Dates',
+					to: '/specialdates'
 				}
 			],
 			miniVariant: false,
