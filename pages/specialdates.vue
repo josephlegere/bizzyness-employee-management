@@ -263,6 +263,7 @@ import moment from 'moment';
 
 export default {
     data: () => ({
+        errors: '',
         type: 'month',
         types: ['month', 'week', 'day', '4day'],
         mode: 'stack',
@@ -301,7 +302,19 @@ export default {
                     type: this.specialDateType,
                     specialdatevalue: this.specialdatevalue
                 };
-                this.$store.dispatch('specialdates/insert', { tenant: this.loggeduser, specialdate });
+                this.$store.dispatch('specialdates/insert', { tenant: this.loggeduser, specialdate, colors: this.colors })
+                    .then(() => {
+                        this.specialDatesForm = false;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        console.error('Error in Store!');
+                        this.errors = err;
+                    })
+                    .finally(() => {
+                        this.validate = false;
+                        this.submittingForm = false;
+                    });
             }
         },
         getEventColor (event) {
