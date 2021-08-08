@@ -30,7 +30,7 @@ export const actions = {
     },
     async insert({ commit }, { tenant, specialdate, colors }) {
         try {
-            let { tenantid, uid, id, name: user_name } = tenant;
+            let { tenantid, uid, id, name: user_name, employee_code } = tenant;
             let { name, start, end, type, specialdatevalue } = specialdate;
             let tenant_id_only = tenantid.split('/')[1];
             let dates = [];
@@ -41,6 +41,7 @@ export const actions = {
             console.log(dates);
 
             const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.SPECIALDATES_URL}/${process.env.CLIENT_TYPE}/${tenant_id_only}/${uid}`, {
+                employee_code,
                 dates
             });
             console.log(response.data);

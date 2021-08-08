@@ -2,61 +2,54 @@
     <v-row no-gutters>
         <v-col>
             <v-sheet
-                tile
                 height="54"
-                class="d-flex"
-            >
-                <v-btn
-                    icon
-                    class="ma-2"
-                    @click="$refs.calendar.prev()"
-                >
-                    <v-icon>mdi-chevron-left</v-icon>
-                </v-btn>
-                <v-select
-                    v-model="type"
-                    :items="types"
-                    dense
-                    outlined
-                    hide-details
-                    class="ma-2"
-                    label="type"
-                ></v-select>
-                <v-select
-                    v-model="mode"
-                    :items="modes"
-                    dense
-                    outlined
-                    hide-details
-                    label="event-overlap-mode"
-                    class="ma-2"
-                ></v-select>
-                <v-select
-                    v-model="weekday"
-                    :items="weekdays"
-                    dense
-                    outlined
-                    hide-details
-                    label="weekdays"
-                    class="ma-2"
-                ></v-select>
-                <v-spacer></v-spacer>
-                <v-btn
-                    icon
-                    class="ma-2"
-                    @click="$refs.calendar.next()"
-                >
-                    <v-icon>mdi-chevron-right</v-icon>
-                </v-btn>
+            >  
+                <v-toolbar flat>
+                    <v-toolbar-title v-if="$refs.calendar">
+                        {{ $refs.calendar.title }}
+                    </v-toolbar-title>
+                    <v-btn
+                        icon
+                        class="ma-2"
+                        @click="$refs.calendar.prev()"
+                    >
+                        <v-icon>mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-btn
+                        icon
+                        class="ma-2"
+                        @click="$refs.calendar.next()"
+                    >
+                        <v-icon>mdi-chevron-right</v-icon>
+                    </v-btn>
+                    <v-spacer></v-spacer>
+                    <v-select
+                        v-model="type"
+                        :items="types"
+                        dense
+                        outlined
+                        hide-details
+                        class="ma-2"
+                        label="type"
+                    ></v-select>
+                    <v-select
+                        v-model="weekday"
+                        :items="weekdays"
+                        dense
+                        outlined
+                        hide-details
+                        label="weekdays"
+                        class="ma-2"
+                    ></v-select>
+                </v-toolbar>
             </v-sheet>
-            <v-sheet>
+            <v-sheet class="mt-5">
                 <v-calendar
                     ref="calendar"
                     v-model="value"
                     :weekdays="weekday"
                     :type="type"
                     :events="events"
-                    :event-overlap-mode="mode"
                     :event-overlap-threshold="30"
                     :event-color="getEventColor"
                 ></v-calendar>
@@ -266,8 +259,6 @@ export default {
         errors: '',
         type: 'month',
         types: ['month', 'week', 'day', '4day'],
-        mode: 'stack',
-        modes: ['stack', 'column'],
         weekday: [0, 1, 2, 3, 4, 5, 6],
         weekdays: [
             { text: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
