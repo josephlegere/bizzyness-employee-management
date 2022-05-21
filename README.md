@@ -1,5 +1,7 @@
 # EmployeeManagement
 
+Should use yarn install for installing dependencies, as it would correctly include the right dependency. There is some issues when using npm install as there are some version mismatch with Vue.
+
 ## Build Setup
 
 ```bash

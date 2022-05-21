@@ -65,5 +65,18 @@ export const actions = {
 export const mutations = {
 	setUser(state, account) {
 		state.loggeduser = account;
+	},
+	ON_AUTH_STATE_CHANGED_MUTATION: (state, { authUser, claims }) => {
+		if (!authUser) {
+			console.log('Not Authenticated!')
+			return;
+		}
+
+		// Don't do this:
+		state.user = authUser
+
+		// Do this:
+		const { uid, email, emailVerified } = authUser
+		state.user = { uid, email, emailVerified }
 	}
 };

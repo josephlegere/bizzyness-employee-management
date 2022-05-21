@@ -2,6 +2,7 @@ import colors from 'vuetify/es5/util/colors';
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
+  mode: 'spa',
   head: {
     titleTemplate: '%s - EmployeeManagement',
     title: 'EmployeeManagement',
@@ -31,14 +32,14 @@ export default {
     middleware: ['authenticated']
   },
 
-  pwa: {
-    workbox: {
-      importScripts: ['/firebase-auth-sw.js'],
-      // by default the workbox module will not install the service worker in dev environment to avoid conflicts with HMR
-      // only set this true for testing and remember to always clear your browser cache in development
-      dev: process.env.NODE_ENV === 'development'
-    }
-  },
+  // pwa: {
+  //   workbox: {
+  //     importScripts: ['/firebase-auth-sw.js'],
+  //     // by default the workbox module will not install the service worker in dev environment to avoid conflicts with HMR
+  //     // only set this true for testing and remember to always clear your browser cache in development
+  //     dev: process.env.NODE_ENV === 'development'
+  //   }
+  // },
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
@@ -68,8 +69,15 @@ export default {
           measurementId: process.env.NUXT_ENV_MEASUREMENT_ID
         },
         services: {
-          auth: true, // Just as example. Can be any other service.
-          firestore: true
+          auth: { // Just as example. Can be any other service.
+            persistence: 'local', // default
+            initialize: {
+              onAuthStateChangedMutation: 'auth/ON_AUTH_STATE_CHANGED_MUTATION',
+              subscribeManually: false
+            },
+            ssr: false, // default
+          },
+          firestore: true,
         }
       }
     ]
