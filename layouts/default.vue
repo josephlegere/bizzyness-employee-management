@@ -114,6 +114,11 @@ export default {
 					icon: 'mdi-calendar',
 					title: 'Special Dates',
 					to: '/specialdates'
+				},
+				{
+					icon: 'mdi-account-arrow-right-outline',
+					title: 'Add Attendance',
+					to: '/attendanceAdd'
 				}
 			],
 			miniVariant: false,
