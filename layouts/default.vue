@@ -119,6 +119,11 @@ export default {
 					icon: 'mdi-account-arrow-right-outline',
 					title: 'Add Attendance',
 					to: '/attendanceAdd'
+				},
+				{
+					icon: 'mdi-account-cash',
+					title: 'Payroll',
+					to: '/payroll'
 				}
 			],
 			miniVariant: false,
