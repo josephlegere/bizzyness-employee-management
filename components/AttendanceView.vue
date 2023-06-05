@@ -111,7 +111,7 @@ export default {
         this.fillBody();
     },
     computed: {
-        generatePDF() {
+        generatePDF() { // ------------------------------ not working in dev build ------------------------------
             if (process.client) {
                 // const jsPDF = require('jspdf');
                 require('jspdf-autotable');

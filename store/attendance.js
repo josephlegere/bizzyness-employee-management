@@ -9,39 +9,27 @@ export const state = () => ({
 export const actions = {
     async getChecker({ commit }, { tenant }) {
         try {
-            let _list = [];
-            let _attendance_finalized = [];
-            console.log(tenant);
+            // console.log(tenant);
+            const { tenantid, uid, daysoff } = tenant;
+            const tenant_id_only = tenantid.split('/')[1]; //not a reference, without the "tenant/" prefix
 
-            let { tenantid, uid, daysoff } = tenant;
+            let employees = []; // anticipated
+            let attendance = [];
 
-            let tenant_id_only = tenantid.split('/')[1]; //not a reference, without the "tenant/" prefix
+            const anticipated = await this.$axios.get(`${process.env.ROOT_URL}${process.env.ANTICIPATED_EMP}`);
+            if (anticipated && anticipated?.data) employees = anticipated.data.employees.map(({ name, employee_code, user_code }) => ({ name, id: employee_code || user_code }));
 
-            let employees = [];
-            let employee_get = await this.$fire.firestore.collection('users')
-                .where('tenant_group.tenantid', '==', tenantid)
-                .where('tenant_group.checker', '==', true)
-                .get();
+            const attendance_res = await this.$axios.post(`${process.env.ROOT_URL}${process.env.ATTENDANCE}`, { st: "for confirmation", dt: "current" });
+            if (attendance_res && attendance_res?.data) attendance = attendance_res.data.attendance_list;
 
-            employee_get.forEach(doc => {
-                let { name, employee_code } = doc.data();
-                let _employee = { name };
+            // const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/${tenant_id_only}/${uid}?task=checker`);
+            // let { attendance } = response.data.data;
 
-                if (employee_code) _employee.id = employee_code;
-                else _employee.id = doc.id;
-
-                employees.push(_employee);
-            });
-
-            const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/${tenant_id_only}/${uid}?task=checker`);
-            let { attendance } = response.data.data;
-
-            _list = attendance_formatted({
-                attendance: attendance.list,
+            const _list = attendance_formatted({
+                attendance,
                 daysoff
             });
-            _attendance_finalized = [ ..._list, ...get_anticipated_attendance(employees, _list) ];
-            // console.log(employees);
+            const _attendance_finalized = [ ..._list, ...get_anticipated_attendance(employees, _list) ];
             // console.log(_list);
 
             commit("setChecker", _attendance_finalized);
@@ -52,15 +40,19 @@ export const actions = {
     },
     async getMonitor({ commit }, { tenant }) {
         try {
-            let _list = [];
-            let { tenantid, uid, daysoff } = tenant;
-            let tenant_id_only = tenantid.split('/')[1]; //not a reference, without the "tenant/" prefix
+            const { tenantid, uid, daysoff } = tenant;
+            const tenant_id_only = tenantid.split('/')[1]; //not a reference, without the "tenant/" prefix
 
-            const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/${tenant_id_only}/${uid}?task=monitor`);
-            let { attendance } = response.data.data;
+            let attendance = [];
+
+            const attendance_res = await this.$axios.post(`${process.env.ROOT_URL}${process.env.ATTENDANCE}`, { st: "confirmed", dt: "current" });
+            if (attendance_res && attendance_res?.data) attendance = attendance_res.data.attendance_list;
+
+            // const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/${tenant_id_only}/${uid}?task=monitor`);
+            // let { attendance } = response.data.data;
             
-            _list = attendance_formatted({
-                attendance: attendance.list,
+            const _list = attendance_formatted({
+                attendance,
                 daysoff
             });
             // console.log(_list);
@@ -72,12 +64,24 @@ export const actions = {
         }
     },
     async confirmChecker({ commit }, { tenant, list }) {
-        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_VERIFY}/confirm`, { tenant, list });
+        const { employee_code } = tenant;
+        const attendance = list.map(({ date, employeeid, employee, attendid }) => ({ date, empid: employeeid, employee, attendid }));
+        console.log(list);
+
+        const response = await this.$axios.post(`${process.env.ROOT_URL}${process.env.ATTENDANCE_VERIFY}`, { atn: attendance, cnf: employee_code });
+        console.log('response', response);
+        // const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_VERIFY}/confirm`, { tenant, list });
 
         commit("stripChecker", list);
     },
     async rejectChecker({ commit }, { tenant, list }) {
-        const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_VERIFY}/reject`, { tenant, list });
+        const { employee_code } = tenant;
+        const attendance = list.map(({ date, employeeid, employee, attendid }) => ({ date, empid: employeeid, employee, attendid }));
+        console.log(list);
+
+        const response = await this.$axios.post(`${process.env.ROOT_URL}${process.env.ATTENDANCE_VERIFY}`, { rej: attendance, cnf: employee_code });
+        console.log('response', response);
+        // const response = await this.$axios.post(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL_VERIFY}/reject`, { tenant, list });
 
         commit("stripChecker", list);
     }
