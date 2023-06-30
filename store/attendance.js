@@ -19,7 +19,7 @@ export const actions = {
             const anticipated = await this.$axios.get(`${process.env.ROOT_URL}${process.env.ANTICIPATED_EMP}`);
             if (anticipated && anticipated?.data) employees = anticipated.data.employees.map(({ name, employee_code, user_code }) => ({ name, id: employee_code || user_code }));
 
-            const attendance_res = await this.$axios.post(`${process.env.ROOT_URL}${process.env.ATTENDANCE}`, { st: "for confirmation", dt: "current" });
+            const attendance_res = await this.$axios.post(`${process.env.ROOT_URL}${process.env.ATTENDANCE}`, { st: "for confirmation", dt: "current", "specialDates": true });
             if (attendance_res && attendance_res?.data) attendance = attendance_res.data.attendance_list;
 
             // const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/${tenant_id_only}/${uid}?task=checker`);
@@ -267,9 +267,9 @@ function attendance_formatted(data) {//paramter is one as long as its all relate
         // determine if its a weekend or a special date
         if (daysoff.some(_day => _day.num === moment((elem.timings[0].input).substr(0, 10)).day())) hrTotal += workHours;
         else if (elem.hasOwnProperty('special_date')) {
-            let { type, hours } = elem.special_date;
-            if (type === 'holiday') hrTotal += workHours;
-            else if (type === 'specialtiming') workHours = 6;
+            let { type, value } = elem.special_date;
+            if (type === 'overtime rate') hrTotal += workHours;
+            else if (type === 'work hours') workHours = value;
         }
         
         // DON'T INCLUDE ANY CONDITION IF TIMING LIST HAS LENGTH GREATER THAN 0
