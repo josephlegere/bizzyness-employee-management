@@ -45,7 +45,7 @@ export const actions = {
 
             let attendance = [];
 
-            const attendance_res = await this.$axios.post(`${process.env.ROOT_URL}${process.env.ATTENDANCE}`, { st: "confirmed", dt: "current" });
+            const attendance_res = await this.$axios.post(`${process.env.ROOT_URL}${process.env.ATTENDANCE}`, { st: "confirmed", dt: "current", "specialDates": true });
             if (attendance_res && attendance_res?.data) attendance = attendance_res.data.attendance_list;
 
             // const response = await this.$axios.get(`${process.env.BASE_URL}${process.env.ATTENDANCE_URL}/${process.env.CLIENT_TYPE}/${tenant_id_only}/${uid}?task=monitor`);
